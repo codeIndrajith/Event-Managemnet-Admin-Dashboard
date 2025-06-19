@@ -1,1 +1,21 @@
 @import "tailwindcss";
+
+@layer utilities {
+  /* Gradient background */
+  .bg-primary {
+    background-image: linear-gradient(to right, #3b82f6, #84cc16);
+  }
+
+  /* Solid color */
+  .text-primary {
+    color: #3b82f6;
+  }
+
+  .bg-primary-solid {
+    background-color: #3b82f6;
+  }
+
+  .border-primary {
+    border-color: #3b82f6;
+  }
+}
