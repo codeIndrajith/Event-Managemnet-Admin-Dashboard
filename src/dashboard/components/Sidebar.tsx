@@ -13,18 +13,22 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const navItems = [
-    { path: "/", icon: <FaHome />, label: "Dashboard" },
+    { path: "/dashboard", icon: <FaHome />, label: "Dashboard" },
     {
-      path: "/venue-management",
+      path: "/dashboard/venue-management",
       icon: <FaLocationPin />,
       label: "Venue Management",
     },
     {
-      path: "/event-approval",
+      path: "/dashboard/event-approval",
       icon: <FaCheckCircle />,
       label: "Event Approvals",
     },
-    { path: "/events", icon: <MdEventAvailable />, label: "All Events" },
+    {
+      path: "/dashboard/events",
+      icon: <MdEventAvailable />,
+      label: "All Events",
+    },
   ];
 
   return (
