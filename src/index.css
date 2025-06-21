@@ -3,7 +3,7 @@
 @layer utilities {
   /* Gradient background */
   .bg-primary {
-    background-image: linear-gradient(to right, #3b82f6, #84cc16);
+    background-image: linear-gradient(to right, #44403c, #064e3b);
   }
 
   /* Solid color */

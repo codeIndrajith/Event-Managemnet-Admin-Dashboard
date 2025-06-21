@@ -14,9 +14,11 @@ import HIMSNumberField from "../../dashboard/components/HIMSNumberField";
 import toast from "react-hot-toast";
 import { AddVenues } from "../../api/venue-management/venueAPIs";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { FETCH_VENUES } from "../../reactQuery/query";
 
 const AddVenueForm: React.FC = () => {
+  const queryClinet = useQueryClient();
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const axiosPrivate = useAxiosPrivate();
   const {
@@ -45,6 +47,11 @@ const AddVenueForm: React.FC = () => {
     mutationFn: (data: VenuSchemaType) =>
       AddVenues({ formData: data, axiosPrivate }),
     onSuccess: () => {
+      queryClinet.invalidateQueries({
+        queryKey: [FETCH_VENUES],
+        exact: true,
+      });
+
       reset();
       toast.success("Event Add Complete", {
         position: "top-right",
