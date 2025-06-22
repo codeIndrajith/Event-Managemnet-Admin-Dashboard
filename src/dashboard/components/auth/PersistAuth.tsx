@@ -7,7 +7,8 @@ import {
   AuthUser,
   type UniqueResponseFormat,
 } from "../../../api/auth/authAPIs";
-import { setAuthUser } from "../../../redux/slices/authSlice";
+import { logout, setAuthUser } from "../../../redux/slices/authSlice";
+import toast from "react-hot-toast";
 
 const PersistAuth: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -25,7 +26,7 @@ const PersistAuth: React.FC = () => {
         }
 
         const response = await AuthUser({ axiosPrivate });
-        if (response) {
+        if (response && response?.data?.role === "Admin") {
           const authData: UniqueResponseFormat = {
             data: {
               id: response.data?.id,
@@ -35,6 +36,10 @@ const PersistAuth: React.FC = () => {
             },
           };
           dispatch(setAuthUser(authData));
+        } else {
+          dispatch(logout());
+          navigate("/");
+          toast.error("Unauthorized");
         }
       } catch (error: any) {
         navigate("/");

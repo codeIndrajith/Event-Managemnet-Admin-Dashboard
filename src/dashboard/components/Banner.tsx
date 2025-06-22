@@ -10,6 +10,7 @@ interface BannerProps {
   imageAlt: string;
   imagePosition?: "left" | "right";
   variant?: "primary" | "secondary" | "light";
+  className?: string;
 }
 
 const Banner: React.FC<BannerProps> = ({
@@ -19,6 +20,7 @@ const Banner: React.FC<BannerProps> = ({
   onAction,
   imageSrc,
   imageAlt,
+  className,
   imagePosition = "right",
   variant = "primary",
 }) => {
@@ -61,11 +63,7 @@ const Banner: React.FC<BannerProps> = ({
 
         {/* Image Section */}
         <div className="">
-          <img
-            src={imageSrc}
-            alt={imageAlt}
-            className="object-cover w-[160px] md:w-[200px]"
-          />
+          <img src={imageSrc} alt={imageAlt} className={className} />
         </div>
       </div>
     </div>

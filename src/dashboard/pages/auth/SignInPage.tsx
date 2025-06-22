@@ -36,10 +36,7 @@ const SignInPage: React.FC = () => {
       if (response) {
         const token = response?.token ?? "";
         localStorage.setItem("token", token);
-        toast.success("Sign In Complete", {
-          position: "top-right",
-          className: "text-xs",
-        });
+
         navigate("/dashboard");
       }
     } catch (error: any) {

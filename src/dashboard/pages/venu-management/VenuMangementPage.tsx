@@ -61,6 +61,7 @@ const VenuMangementPage: React.FC = () => {
             description="Add details and specifications for every new venue"
             imageSrc={venueImage}
             imageAlt="VenueImage"
+            className="object-cover w-[200px]"
           />
         </div>
         {!venueId ? (
