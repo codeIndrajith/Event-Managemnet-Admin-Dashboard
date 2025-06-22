@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import AddVenueForm from "../../../forms/venue-management/AddVenueForm";
 import Banner from "../../components/Banner";
 import venueImage from "../../../assets/venues.png";
@@ -11,6 +11,7 @@ import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 
 const VenuMangementPage: React.FC = () => {
   const axiosPrivate = useAxiosPrivate();
+  const [venueId, setVenueId] = useState<string>("");
   const { data: venues, isLoading: isLoadingFetchVenues } = useQuery({
     queryKey: [FETCH_VENUES],
     queryFn: () => GetAllVenues({ axiosPrivate }),
@@ -44,12 +45,13 @@ const VenuMangementPage: React.FC = () => {
   // ];
 
   const handleEdit = (id: string) => {
-    console.log("Edit venue:", id);
+    setVenueId(id);
   };
 
   const handleDelete = (id: string) => {
     console.log("Delete venue:", id);
   };
+
   return (
     <div className="min-h-screen px-4">
       <div>
@@ -61,12 +63,21 @@ const VenuMangementPage: React.FC = () => {
             imageAlt="VenueImage"
           />
         </div>
-        <div className="px-4">
-          <h1 className="text-xl font-semibold border-b pb-2 mb-4 border-gray-400">
+        {!venueId ? (
+          <div className="px-4">
+            <h1 className="text-xl font-semibold border-b pb-2 mb-4 border-gray-400">
+              Add Venue
+            </h1>
+            <AddVenueForm setVenueId={setVenueId} />
+          </div>
+        ) : (
+          <button
+            className="px-4 py-2 bg-primary text-white rounded-md text-sm cursor-pointer"
+            onClick={() => setVenueId("")}
+          >
             Add Venue
-          </h1>
-          <AddVenueForm />
-        </div>
+          </button>
+        )}
 
         <div className="rounded-xl px-4">
           <div>

@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaMapMarkerAlt, FaUsers, FaEdit, FaTrash } from "react-icons/fa";
 import { FaLocationPin } from "react-icons/fa6";
 import { MdMeetingRoom } from "react-icons/md";
+import Overlay from "../../../components/modals/Overlay";
+import Modal from "../../../components/modals/Modal";
+import AddVenueForm from "../../../../forms/venue-management/AddVenueForm";
+import { IoMdCloseCircle } from "react-icons/io";
 
 interface Venue {
   id: string;
@@ -17,6 +21,7 @@ interface VenueCardProps {
 }
 
 const VenueCard: React.FC<VenueCardProps> = ({ venue, onEdit, onDelete }) => {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const getLocationIcon = () => {
     switch (venue.locationType) {
       case "indoor":
@@ -61,7 +66,10 @@ const VenueCard: React.FC<VenueCardProps> = ({ venue, onEdit, onDelete }) => {
 
         <div className="flex justify-end space-x-2 pt-2 border-t border-gray-100">
           <button
-            onClick={() => onEdit(venue.id)}
+            onClick={() => {
+              onEdit(venue.id);
+              setIsModalOpen(true);
+            }}
             className="p-2 cursor-pointer text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
             aria-label="Edit venue"
           >
@@ -76,6 +84,34 @@ const VenueCard: React.FC<VenueCardProps> = ({ venue, onEdit, onDelete }) => {
           </button>
         </div>
       </div>
+
+      {isModalOpen && (
+        <div>
+          <Overlay />
+          <Modal widthClassName="w-full sm:w-max" heightClassName="h-max">
+            <div>
+              <div className="flex items-center justify-between gap-2 border-b pb-2 mb-10">
+                <div className="flex items-center gap-2">
+                  <FaEdit />
+                  <h1>Update Venue</h1>
+                </div>
+                <button
+                  onClick={() => {
+                    onEdit("");
+                    setIsModalOpen(false);
+                  }}
+                >
+                  <IoMdCloseCircle className="size-5 cursor-pointer" />
+                </button>
+              </div>
+              <AddVenueForm
+                venueId={venue?.id}
+                setIsModalOpen={setIsModalOpen}
+              />
+            </div>
+          </Modal>
+        </div>
+      )}
     </div>
   );
 };

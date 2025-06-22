@@ -8,7 +8,14 @@ interface AddVenuesParams {
 }
 
 interface GetAllVenuesParams {
+  venueId?: string;
   axiosPrivate: AxiosInstance;
+}
+
+interface UpdateVenuesParams {
+  formData: VenuSchemaType;
+  axiosPrivate: AxiosInstance;
+  venueId: string;
 }
 
 export const AddVenues = async ({
@@ -38,13 +45,47 @@ export const AddVenues = async ({
 };
 
 export const GetAllVenues = async ({
+  venueId,
   axiosPrivate,
 }: GetAllVenuesParams): Promise<UniqueResponseFormat> => {
   try {
-    const response = await axiosPrivate.get("/admin/venues");
+    const queryParams = new URLSearchParams();
+    if (venueId) {
+      queryParams.append("venueId", venueId.toString());
+    }
+    const response = await axiosPrivate.get(
+      `/admin/venues?${queryParams.toString()}`
+    );
     return response.data;
   } catch (error: any) {
     let errMsg: string = "Error occured during fetch venues";
+    if (error?.response?.data?.message) {
+      errMsg = error.response.data.message;
+    } else if (error?.message === "Networ Error") {
+      errMsg = "Service Unavailable";
+    }
+    throw new Error(errMsg);
+  }
+};
+
+export const UpdateVenue = async ({
+  formData,
+  venueId,
+  axiosPrivate,
+}: UpdateVenuesParams): Promise<any> => {
+  try {
+    const data = {
+      venueName: formData?.venueName,
+      locationType: formData?.locationType,
+      maxAttendees: formData?.maxAttendees,
+    };
+    const response = await axiosPrivate.put(
+      `/admin/update-venue/${venueId}`,
+      JSON.stringify(data)
+    );
+    return response.data;
+  } catch (error: any) {
+    let errMsg: string = "Error occured during update venue";
     if (error?.response?.data?.message) {
       errMsg = error.response.data.message;
     } else if (error?.message === "Networ Error") {

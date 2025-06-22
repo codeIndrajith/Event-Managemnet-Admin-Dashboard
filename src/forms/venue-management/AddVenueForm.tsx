@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   venueSchema,
@@ -12,15 +12,36 @@ import { FaLocationArrow } from "react-icons/fa";
 import { ImSpinner5, ImUserPlus } from "react-icons/im";
 import HIMSNumberField from "../../dashboard/components/HIMSNumberField";
 import toast from "react-hot-toast";
-import { AddVenues } from "../../api/venue-management/venueAPIs";
+import {
+  AddVenues,
+  GetAllVenues,
+  UpdateVenue,
+} from "../../api/venue-management/venueAPIs";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { FETCH_VENUES } from "../../reactQuery/query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { FETCH_VENUE, FETCH_VENUES } from "../../reactQuery/query";
 
-const AddVenueForm: React.FC = () => {
+interface AddVenueFormProps {
+  venueId?: string;
+  setIsModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  setVenueId?: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const AddVenueForm: React.FC<AddVenueFormProps> = ({
+  venueId,
+  setIsModalOpen,
+  setVenueId,
+}) => {
   const queryClinet = useQueryClient();
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const axiosPrivate = useAxiosPrivate();
+
+  const { data: venue, isLoading: isLoadingFetchVenue } = useQuery({
+    queryKey: [FETCH_VENUE],
+    queryFn: () => GetAllVenues({ axiosPrivate, venueId }),
+    enabled: !!venueId,
+  });
+
   const {
     register,
     handleSubmit,
@@ -35,6 +56,22 @@ const AddVenueForm: React.FC = () => {
     },
   });
 
+  useEffect(() => {
+    if (venueId === undefined) {
+      reset();
+    }
+  }, [venueId]);
+
+  useEffect(() => {
+    if (venue && venueId) {
+      reset({
+        venueName: venue.data[0]?.venueName ?? "",
+        locationType: venue.data[0]?.locationType ?? undefined,
+        maxAttendees: venue.data[0]?.maxAttendees ?? undefined,
+      });
+    }
+  }, [venue, reset]);
+
   const locationType = [
     { id: 1, type: "indoor" },
     { id: 2, type: "outdoor" },
@@ -45,18 +82,36 @@ const AddVenueForm: React.FC = () => {
   };
   const { mutateAsync: addVenue } = useMutation({
     mutationFn: (data: VenuSchemaType) =>
-      AddVenues({ formData: data, axiosPrivate }),
+      venueId
+        ? UpdateVenue({ formData: data, axiosPrivate, venueId })
+        : AddVenues({ formData: data, axiosPrivate }),
     onSuccess: () => {
       queryClinet.invalidateQueries({
         queryKey: [FETCH_VENUES],
         exact: true,
       });
 
-      reset();
-      toast.success("Event Add Complete", {
-        position: "top-right",
-        className: "text-xs",
+      reset({
+        venueName: "",
+        locationType: "",
+        maxAttendees: undefined,
       });
+
+      if (venueId && setIsModalOpen) {
+        setIsModalOpen(false);
+        reset({
+          venueName: "",
+          locationType: "",
+          maxAttendees: undefined,
+        });
+      }
+      toast.success(
+        `${venueId ? "Event Update Complete" : "Event Add Complete"}`,
+        {
+          position: "top-right",
+          className: "text-xs",
+        }
+      );
     },
     onError: (error: any) => {
       toast.error(error?.message ?? "Error occurred during Add Venue", {
@@ -111,25 +166,42 @@ const AddVenueForm: React.FC = () => {
       </div>
 
       <div className="flex justify-end space-x-4 w-full">
-        <button
-          type="button"
-          onClick={() => reset()}
-          className="sm:py-2 sm:px-10 p-2 w-full sm:w-auto text-sm border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
-        >
-          Reset
-        </button>
-        <button
-          type="submit"
-          className="sm:py-2 sm:px-4 p-2 w-full sm:w-auto text-sm bg-primary rounded-md text-white cursor-pointer"
-        >
-          {isProcessing ? (
-            <div className="flex items-center gap-2 justify-center">
-              <ImSpinner5 /> <span>Processing...</span>
-            </div>
-          ) : (
-            "Add Venue"
-          )}
-        </button>
+        {!venueId && (
+          <button
+            type="button"
+            onClick={() => reset()}
+            className="sm:py-2 sm:px-10 p-2 w-full sm:w-auto text-sm border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            Reset
+          </button>
+        )}
+        {venueId ? (
+          <button
+            type="submit"
+            className="sm:py-2 sm:px-4 p-2 w-full sm:w-auto text-sm bg-primary rounded-md text-white cursor-pointer"
+          >
+            {isProcessing ? (
+              <div className="flex items-center gap-2 justify-center">
+                <ImSpinner5 /> <span>Processing...</span>
+              </div>
+            ) : (
+              "Update Venue"
+            )}
+          </button>
+        ) : (
+          <button
+            type="submit"
+            className="sm:py-2 sm:px-4 p-2 w-full sm:w-auto text-sm bg-primary rounded-md text-white cursor-pointer"
+          >
+            {isProcessing ? (
+              <div className="flex items-center gap-2 justify-center">
+                <ImSpinner5 /> <span>Processing...</span>
+              </div>
+            ) : (
+              "Add Venue"
+            )}
+          </button>
+        )}
       </div>
     </form>
   );
