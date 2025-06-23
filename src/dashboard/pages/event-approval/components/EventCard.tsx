@@ -8,21 +8,14 @@ import {
   FiMapPin,
   FiUser,
   FiBriefcase,
+  FiFile,
+  FiInfo,
 } from "react-icons/fi";
-import { FaRegFilePdf } from "react-icons/fa";
+import { FaCheckCircle, FaRegFilePdf } from "react-icons/fa";
+import type { EventResponse } from "../../../../api/events/eventAPIs";
 
 interface EventCardProps {
-  event: {
-    id: string;
-    senderName: string;
-    senderRole: string;
-    senderOrganization: string;
-    eventDate: string;
-    eventTime: string;
-    eventLocation: string;
-    approveRequestLetterLink: string;
-    status?: "pending" | "approved" | "rejected";
-  };
+  event: EventResponse;
   onApprove: (id: string) => void;
   onReject: (id: string) => void;
 }
@@ -32,97 +25,130 @@ const EventCard: React.FC<EventCardProps> = ({
   onApprove,
   onReject,
 }) => {
-  const getStatusColor = () => {
-    switch (event.status) {
-      case "approved":
-        return "bg-green-100 text-green-800";
-      case "rejected":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-yellow-100 text-yellow-800";
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
+  console.log(event);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-md transition-all duration-200">
-      <div className="p-5">
-        <div className="flex justify-between items-start mb-4">
-          <h2 className="text-lg font-semibold text-gray-800 truncate">
-            {event.senderOrganization}
-          </h2>
-          <span
-            className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor()}`}
-          >
-            {event.status?.toUpperCase() || "PENDING"}
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-4">
+      <div className="hidden md:grid md:grid-cols-12 bg-gray-50 px-4 py-3 border-b border-gray-200">
+        <div className="md:col-span-4 flex items-center gap-2">
+          <FiBriefcase className="text-gray-400" size={14} />
+          <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Event
           </span>
         </div>
+        <div className="md:col-span-8 grid grid-cols-3 gap-4">
+          <div className="flex items-center gap-2">
+            <FiUser className="text-gray-400" size={14} />
+            <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Organizer
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <FiCalendar className="text-gray-400" size={14} />
+            <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              When
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <FiMapPin className="text-gray-400" size={14} />
+            <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Where
+            </span>
+          </div>
+        </div>
+      </div>
 
-        <div className="space-y-3">
-          <div className="flex items-center">
-            <FiUser className="text-gray-400 mr-2" />
-            <span className="text-gray-600 text-sm">{event.senderName}</span>
-          </div>
-          <div className="flex items-center">
-            <FiBriefcase className="text-gray-400 mr-2" />
-            <span className="text-gray-600 text-sm capitalize">
-              {event.senderRole}
-            </span>
-          </div>
-          <div className="flex items-center">
-            <FiCalendar className="text-gray-400 mr-2" />
-            <span className="text-gray-600 text-sm">
-              {formatDate(event.eventDate)}
-            </span>
-          </div>
-          <div className="flex items-center">
-            <FiClock className="text-gray-400 mr-2" />
-            <span className="text-gray-600 text-sm">{event.eventTime}</span>
-          </div>
-          <div className="flex items-center">
-            <FiMapPin className="text-gray-400 mr-2" />
-            <span className="text-gray-600 text-sm">{event.eventLocation}</span>
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 px-4 py-4 hover:bg-gray-50 transition-colors">
+        <div className="md:col-span-4">
+          <div className="flex items-start gap-3">
+            <div className="bg-blue-50 p-2 rounded-lg">
+              <FiBriefcase className="text-blue-600" size={16} />
+            </div>
+            <div>
+              <h3 className="font-medium text-gray-900">
+                {event.senderOrganization}
+              </h3>
+              <p className="text-sm text-gray-500 mt-1">{event.senderRole}</p>
+
+              <div className="md:hidden mt-3 space-y-3">
+                <div className="flex items-center gap-3">
+                  <FiUser className="text-gray-400 flex-shrink-0" size={16} />
+                  <div>
+                    <p className="text-sm text-gray-500">Organizer</p>
+                    <p className="font-medium text-gray-900">
+                      {event.senderName}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <FiCalendar
+                    className="text-gray-400 flex-shrink-0"
+                    size={16}
+                  />
+                  <div>
+                    <p className="text-sm text-gray-500">When</p>
+                    <p className="font-medium text-gray-900">
+                      {event.eventDate} at {event.eventTime}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <FiMapPin className="text-gray-400 flex-shrink-0" size={16} />
+                  <div>
+                    <p className="text-sm text-gray-500">Where</p>
+                    <p className="font-medium text-gray-900">
+                      {event.eventLocation}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="mt-5">
+        <div className="hidden md:grid md:col-span-8 grid-cols-3 gap-4">
+          <div>
+            <p className="font-medium text-gray-900">{event.senderName}</p>
+            <p className="text-sm text-gray-500 mt-1">Organizer</p>
+          </div>
+          <div>
+            <p className="font-medium text-gray-900">{event.eventDate}</p>
+            <p className="text-sm text-gray-500 mt-1">{event.eventTime}</p>
+          </div>
+          <div>
+            <p className="font-medium text-gray-900 line-clamp-2">
+              {event.eventLocation}
+            </p>
+          </div>
+        </div>
+
+        <div className="col-span-full">
           <a
-            href={event.approveRequestLetterLink}
+            href={event.letterLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 transition-colors"
+            className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 px-3 py-2 rounded-md hover:bg-blue-50 transition-colors"
           >
-            <FaRegFilePdf className="mr-2" size={16} />
+            <FaRegFilePdf size={14} />
             <span>View Approval Letter</span>
             <FiDownload className="ml-1" size={14} />
           </a>
         </div>
+      </div>
 
-        {event.status === "pending" && (
-          <div className="mt-6 flex space-x-3">
-            <button
-              onClick={() => onApprove(event.id)}
-              className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded-lg flex items-center justify-center text-sm transition-colors"
-            >
-              <FiCheck className="mr-2" size={16} />
-              Approve
+      <div className="border-t border-gray-200 px-4 py-3">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex gap-2">
+            <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-green-50 hover:bg-green-100 text-green-700 text-sm font-medium rounded-md transition-colors">
+              <FiCheck size={16} />
+              <span>Approve</span>
             </button>
-            <button
-              onClick={() => onReject(event.id)}
-              className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 px-3 rounded-lg flex items-center justify-center text-sm transition-colors"
-            >
-              <FiX className="mr-2" size={16} />
-              Reject
+            <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 text-sm font-medium rounded-md transition-colors">
+              <FiX size={16} />
+              <span>Reject</span>
             </button>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

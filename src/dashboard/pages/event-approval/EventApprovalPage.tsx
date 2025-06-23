@@ -2,6 +2,14 @@ import React, { useState, useEffect } from "react";
 import EventCard from "./components/EventCard";
 import Banner from "../../components/Banner";
 import eventImage from "../../../assets/event.png";
+import { useQuery } from "@tanstack/react-query";
+import { FETCH_PENDING_APPROVAL_EVENTS } from "../../../reactQuery/query";
+import {
+  GetPendingApprovalEvents,
+  type EventResponse,
+} from "../../../api/events/eventAPIs";
+import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
+import type { UniqueResponseFormat } from "../../../api/auth/authAPIs";
 
 interface Event {
   id: string;
@@ -16,74 +24,29 @@ interface Event {
 }
 
 const EventApprovalPage: React.FC = () => {
-  const [events, setEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
+  const axiosPrivate = useAxiosPrivate();
   const [filter, setFilter] = useState<
     "all" | "pending" | "approved" | "rejected"
   >("all");
 
-  useEffect(() => {
-    // Simulate API fetch
-    const fetchEvents = async () => {
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 800));
-
-        const mockEvents: Event[] = [
-          {
-            id: "b81e9836-8a99-4d2f-b761-80fd65662baf",
-            senderName: "Indrajith Bodhinayaka",
-            senderRole: "organizer",
-            senderOrganization: "University Events",
-            eventDate: "2025-04-11",
-            eventTime: "11.00AM",
-            eventLocation: "Main Auditorium 2",
-            approveRequestLetterLink: "https://example.com/letter.pdf",
-            status: "pending",
-          },
-          {
-            id: "a92e9836-8b99-4d2f-b761-80fd65662baf",
-            senderName: "Jane Smith",
-            senderRole: "coordinator",
-            senderOrganization: "Tech Corp",
-            eventDate: "2025-04-15",
-            eventTime: "02.30PM",
-            eventLocation: "Conference Room A",
-            approveRequestLetterLink: "https://example.com/letter2.pdf",
-            status: "approved",
-          },
-        ];
-        setEvents(mockEvents);
-      } catch (error) {
-        console.error("Failed to fetch events:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEvents();
-  }, []);
+  const { data: pendingApprovalEvents, isLoading } = useQuery({
+    queryKey: [FETCH_PENDING_APPROVAL_EVENTS],
+    queryFn: () => GetPendingApprovalEvents({ axiosPrivate }),
+  });
 
   const handleApprove = (id: string) => {
-    setEvents(
-      events.map((event) =>
-        event.id === id ? { ...event, status: "approved" } : event
-      )
-    );
+    console.log(id);
   };
 
   const handleReject = (id: string) => {
-    setEvents(
-      events.map((event) =>
-        event.id === id ? { ...event, status: "rejected" } : event
-      )
-    );
+    console.log(id);
   };
 
-  const filteredEvents = events.filter((event) =>
-    filter === "all" ? true : event.status === filter
-  );
+  // const filteredEvents = events.filter((event) =>
+  //   filter === "all" ? true : event.isApproved === filter
+  // );
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -104,7 +67,7 @@ const EventApprovalPage: React.FC = () => {
           />
         </div>
 
-        <div className="mb-6 flex flex-wrap gap-2">
+        {/* <div className="mb-6 flex flex-wrap gap-2">
           {["all", "pending", "approved", "rejected"].map((f) => (
             <button
               key={f}
@@ -120,11 +83,14 @@ const EventApprovalPage: React.FC = () => {
                 : f.charAt(0).toUpperCase() + f.slice(1)}
             </button>
           ))}
+        </div> */}
+        <div className="border-b pb-2 mb-2">
+          <h1 className="text-lg font-semibold">Pending Approval Events</h1>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredEvents.length > 0 ? (
-            filteredEvents.map((event) => (
+        <div className="w-full">
+          {pendingApprovalEvents && pendingApprovalEvents.data.length > 0 ? (
+            pendingApprovalEvents.data.map((event: EventResponse) => (
               <EventCard
                 key={event.id}
                 event={event}
