@@ -13,6 +13,8 @@ import {
 } from "react-icons/fi";
 import { FaCheckCircle, FaRegFilePdf } from "react-icons/fa";
 import type { EventResponse } from "../../../../api/events/eventAPIs";
+import { IoIosCloseCircle } from "react-icons/io";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface EventCardProps {
   event: EventResponse;
@@ -25,7 +27,17 @@ const EventCard: React.FC<EventCardProps> = ({
   onApprove,
   onReject,
 }) => {
-  console.log(event);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleNavigate = (action: string, id: string) => {
+    if (action === "approve") {
+      navigate(`${location?.pathname}/${id}?isApprove=${true}`);
+    }
+    if (action === "reject") {
+      navigate(`${location?.pathname}/${id}?isApprove=${false}`);
+    }
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-4">
@@ -64,13 +76,13 @@ const EventCard: React.FC<EventCardProps> = ({
             <div className="bg-blue-50 p-2 rounded-lg">
               <FiBriefcase className="text-blue-600" size={16} />
             </div>
-            <div>
+            <div className="w-full">
               <h3 className="font-medium text-gray-900">
                 {event.senderOrganization}
               </h3>
               <p className="text-sm text-gray-500 mt-1">{event.senderRole}</p>
 
-              <div className="md:hidden mt-3 space-y-3">
+              <div className="md:hidden mt-3 space-y-3 w-full">
                 <div className="flex items-center gap-3">
                   <FiUser className="text-gray-400 flex-shrink-0" size={16} />
                   <div>
@@ -109,7 +121,6 @@ const EventCard: React.FC<EventCardProps> = ({
         <div className="hidden md:grid md:col-span-8 grid-cols-3 gap-4">
           <div>
             <p className="font-medium text-gray-900">{event.senderName}</p>
-            <p className="text-sm text-gray-500 mt-1">Organizer</p>
           </div>
           <div>
             <p className="font-medium text-gray-900">{event.eventDate}</p>
@@ -136,15 +147,21 @@ const EventCard: React.FC<EventCardProps> = ({
         </div>
       </div>
 
-      <div className="border-t border-gray-200 px-4 py-3">
+      <div className="border-t bg-primary border-gray-200 px-4 py-3">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex gap-2">
-            <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-green-50 hover:bg-green-100 text-green-700 text-sm font-medium rounded-md transition-colors">
-              <FiCheck size={16} />
+            <button
+              onClick={() => handleNavigate("approve", event.id)}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 text-white border hover:bg-green-500 cursor-pointer hover:border-none text-sm font-medium rounded-md transition-colors"
+            >
+              <FaCheckCircle size={16} />
               <span>Approve</span>
             </button>
-            <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 text-sm font-medium rounded-md transition-colors">
-              <FiX size={16} />
+            <button
+              onClick={() => handleNavigate("reject", event.id)}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 text-white border cursor-pointer hover:bg-red-500 hover:border-none text-sm font-medium rounded-md transition-colors"
+            >
+              <IoIosCloseCircle size={16} />
               <span>Reject</span>
             </button>
           </div>

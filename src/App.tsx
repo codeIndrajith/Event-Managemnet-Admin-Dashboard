@@ -8,6 +8,8 @@ import EventApprovalPage from "./dashboard/pages/event-approval/EventApprovalPag
 import AllEventsPage from "./dashboard/pages/events/AllEventsPage";
 import SignInPage from "./dashboard/pages/auth/SignInPage";
 import PersistAuth from "./dashboard/components/auth/PersistAuth";
+import NotFoundPage from "./dashboard/pages/404/NotFoundPage";
+import EventApproveOrRejectPage from "./dashboard/pages/event-approval/Approve & Reject/EventApproveOrRejectPage";
 
 function App() {
   return (
@@ -26,8 +28,16 @@ function App() {
               path="/dashboard/event-approval"
               element={<EventApprovalPage />}
             />
+            <Route
+              path="/dashboard/event-approval/:id"
+              element={<EventApproveOrRejectPage />}
+            />
+
             <Route path="/dashboard/events" element={<AllEventsPage />} />
           </Route>
+
+          {/* Not Found Page */}
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
     </Router>
