@@ -41,29 +41,29 @@ const EventCard: React.FC<EventCardProps> = ({
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-4">
-      <div className="hidden md:grid md:grid-cols-12 bg-gray-50 px-4 py-3 border-b border-gray-200">
+      <div className="hidden bg-primary md:grid md:grid-cols-12 bg-gray-50 px-4 py-3 border-b border-gray-200">
         <div className="md:col-span-4 flex items-center gap-2">
-          <FiBriefcase className="text-gray-400" size={14} />
-          <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <FiBriefcase className="text-white" size={14} />
+          <span className="text-xs font-medium text-white uppercase tracking-wider">
             Event
           </span>
         </div>
         <div className="md:col-span-8 grid grid-cols-3 gap-4">
           <div className="flex items-center gap-2">
-            <FiUser className="text-gray-400" size={14} />
-            <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <FiUser className="text-white" size={14} />
+            <span className="text-xs font-medium text-white uppercase tracking-wider">
               Organizer
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <FiCalendar className="text-gray-400" size={14} />
-            <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <FiCalendar className="text-white" size={14} />
+            <span className="text-xs font-medium text-white uppercase tracking-wider">
               When
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <FiMapPin className="text-gray-400" size={14} />
-            <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <FiMapPin className="text-white" size={14} />
+            <span className="text-xs font-medium text-white uppercase tracking-wider">
               Where
             </span>
           </div>
@@ -147,19 +147,19 @@ const EventCard: React.FC<EventCardProps> = ({
         </div>
       </div>
 
-      <div className="border-t bg-primary border-gray-200 px-4 py-3">
+      <div className="border-t border-gray-200 px-4 py-3">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex gap-2">
             <button
               onClick={() => handleNavigate("approve", event.id)}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 text-white border hover:bg-green-500 cursor-pointer hover:border-none text-sm font-medium rounded-md transition-colors"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 hover:text-white border border-gray-300 text-gray-500 hover:bg-green-500 cursor-pointer text-sm font-medium rounded-md"
             >
               <FaCheckCircle size={16} />
               <span>Approve</span>
             </button>
             <button
               onClick={() => handleNavigate("reject", event.id)}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 text-white border cursor-pointer hover:bg-red-500 hover:border-none text-sm font-medium rounded-md transition-colors"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 hover:text-white border border-gray-300 text-gray-500 cursor-pointer hover:bg-red-500  text-sm font-medium rounded-md"
             >
               <IoIosCloseCircle size={16} />
               <span>Reject</span>

@@ -22,12 +22,15 @@ import {
   EventApproveOrRejectSchema,
   type EventApproveOrRejectSchemaType,
 } from "../../../../schema/events/eventSchema";
+import { FiLoader } from "react-icons/fi";
 
 const EventApproveOrRejectPage: React.FC = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const isApprove = queryParams.get("isApprove") === "true";
   const schema = EventApproveOrRejectSchema(isApprove);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
 
   const {
     register,
@@ -35,30 +38,42 @@ const EventApproveOrRejectPage: React.FC = () => {
     setValue,
     watch,
     formState: { errors },
+    trigger,
   } = useForm<EventApproveOrRejectSchemaType>({
     resolver: zodResolver(schema),
+    mode: "onChange",
   });
 
-  useEffect(() => {
-    register("file", { required: isApprove });
-  }, [register, isApprove]);
-
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && file instanceof File) {
-      setSelectedFile(file);
-      setValue("file", file, { shouldValidate: true });
+    if (!file) {
+      setSelectedFile(null);
+      setValue("file", "", { shouldValidate: true });
+      trigger("file");
+      return;
     }
+
+    // try {
+    //   setIsUploading(true);
+    //   setSelectedFile(file);
+    //   const fileUrl = await uploadFileToCloudinary(file);
+    //   setValue("file", fileUrl, { shouldValidate: true });
+    //   trigger("file");
+    // } catch (error) {
+    //   console.error("Upload error", error);
+    //   setValue("file", "", { shouldValidate: true });
+    //   trigger("file");
+    // } finally {
+    //   setIsUploading(false);
+    // }
   };
 
   const onSubmit = (data: EventApproveOrRejectSchemaType) => {
-    console.log("Form submitted:", data);
+    console.log(data);
   };
 
   return (
-    <div className="min-h-screen py-8 px-4">
+    <div className="min-h-screen px-4">
       <div className="">
         <div className="text-start mb-8">
           <h1 className="text-3xl font-extrabold text-gray-900">
@@ -81,7 +96,7 @@ const EventApproveOrRejectPage: React.FC = () => {
 
         <div className="bg-white shadow-lg rounded-md overflow-hidden">
           <div className="p-6">
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit)} noValidate>
               {/* File Upload */}
               {isApprove === true && (
                 <div className="mb-6">
@@ -101,10 +116,12 @@ const EventApproveOrRejectPage: React.FC = () => {
                           <span>Upload a file</span>
                           <input
                             id="file-upload"
+                            name="file"
                             type="file"
                             accept=".pdf"
                             className="sr-only"
                             onChange={handleFileChange}
+                            required={isApprove}
                           />
                         </label>
                         <p className="pl-1">or drag and drop</p>
@@ -112,13 +129,19 @@ const EventApproveOrRejectPage: React.FC = () => {
                       <p className="text-xs text-gray-500">PDF up to 10MB</p>
                     </div>
                   </div>
-                  {selectedFile && (
+                  {isUploading ? (
+                    <p className="mt-2 text-sm text-indigo-600 flex items-center">
+                      <FiLoader className="animate-spin mr-2" />
+                      Uploading file...
+                    </p>
+                  ) : selectedFile ? (
                     <p className="mt-2 text-sm text-green-600 flex items-center">
                       <FiCheck className="mr-1" /> {selectedFile.name}
                     </p>
-                  )}
+                  ) : null}
+
                   {errors.file && (
-                    <p className="mt-2 text-sm text-red-600">
+                    <p className="mt-2 text-xs text-sm text-red-600">
                       {errors.file.message?.toString()}
                     </p>
                   )}
@@ -162,7 +185,7 @@ const EventApproveOrRejectPage: React.FC = () => {
               )}
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row sm:justify-between gap-4 mt-8">
+              <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
                 {isApprove === true ? (
                   <div className="flex-1">
                     <button

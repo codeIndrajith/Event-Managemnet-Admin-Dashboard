@@ -3,26 +3,26 @@ import { z } from "zod";
 // Define Zod schema
 
 export const BaseSchema = z.object({
-  file: z.any(),
+  file: z.string().optional(),
   approverName: z.string().min(1, "Approver name is required"),
   approverRole: z.string().min(1, "Approver role is required"),
-  reason: z.string(),
+  reason: z.string().optional(),
 });
 
 export const EventApproveOrRejectSchema = (isApprove: boolean) =>
   BaseSchema.superRefine((data, ctx) => {
     if (isApprove) {
-      if (!(data.file instanceof File)) {
+      if (!data.file || data.file.trim() === "") {
         ctx.addIssue({
           path: ["file"],
           code: z.ZodIssueCode.custom,
           message: "PDF file is required",
         });
-      } else if (data.file.type !== "application/pdf") {
+      } else if (!/^https?:\/\/.+/.test(data.file)) {
         ctx.addIssue({
           path: ["file"],
           code: z.ZodIssueCode.custom,
-          message: "Only PDF files are allowed",
+          message: "Invalid file URL",
         });
       }
     } else {
