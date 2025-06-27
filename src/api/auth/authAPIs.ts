@@ -27,6 +27,7 @@ export const SignIn = async ({
     const data = {
       email: formData.email,
       password: formData.password,
+      role: formData.role,
     };
 
     const response = await axiosPrivate.post(
@@ -39,10 +40,9 @@ export const SignIn = async ({
       token: response.data.token,
     };
   } catch (error: any) {
-    let errMsg: string = "Login failed";
-    console.log(error);
-    if (error?.response?.data?.message) {
-      errMsg = error.response.data.message;
+    let errMsg: string = "";
+    if (error?.response?.data?.error) {
+      errMsg = error?.response?.data?.error;
     } else if (error?.message === "Network Error") {
       errMsg = "Service Unavailable";
     }

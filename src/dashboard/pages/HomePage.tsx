@@ -3,36 +3,40 @@ import React from "react";
 import StatsCard from "./components/StatsCard";
 import RecentEventsTable from "./components/RecentEventsTable";
 import ApprovalRequests from "./components/ApprovalRequests";
-import { FaEvernote, FaLocationPin } from "react-icons/fa6";
-import { FaCheckCircle } from "react-icons/fa";
-import { MdEventAvailable } from "react-icons/md";
+import { FaLocationPin } from "react-icons/fa6";
+import { FaCalendarCheck, FaCheckCircle } from "react-icons/fa";
+import eventImage from "../../assets/event.jpg";
+import approvedImage from "../../assets/apprvoed.jpg";
+import venueImage from "../../assets/venueImage.jpg";
+import { MdLocationOn } from "react-icons/md";
 
 const HomePage: React.FC = () => {
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-800">
-        Event Management Dashboard
-      </h1>
+    <div className="space-y-3">
+      <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <StatsCard
           title="Total Events"
           value="128"
-          Icon={MdEventAvailable}
+          Icon={FaCalendarCheck}
           color="indigo"
+          ImageLink={eventImage}
         />
         <StatsCard
           title="Pending Approvals"
           value="24"
           Icon={FaCheckCircle}
           color="yellow"
+          ImageLink={approvedImage}
         />
         <StatsCard
           title="Active Venues"
           value="18"
-          Icon={FaLocationPin}
+          Icon={MdLocationOn}
           color="green"
+          ImageLink={venueImage}
         />
       </div>
 

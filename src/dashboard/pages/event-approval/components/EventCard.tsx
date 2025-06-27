@@ -13,7 +13,7 @@ import {
 } from "react-icons/fi";
 import { FaCheckCircle, FaRegFilePdf } from "react-icons/fa";
 import type { EventResponse } from "../../../../api/events/eventAPIs";
-import { IoIosCloseCircle } from "react-icons/io";
+import { IoIosCloseCircle, IoMdCloseCircle } from "react-icons/io";
 import { useLocation, useNavigate } from "react-router-dom";
 
 interface EventCardProps {
@@ -42,13 +42,13 @@ const EventCard: React.FC<EventCardProps> = ({
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-4">
       <div className="hidden bg-primary md:grid md:grid-cols-12 bg-gray-50 px-4 py-3 border-b border-gray-200">
-        <div className="md:col-span-4 flex items-center gap-2">
+        <div className="md:col-span-3 flex items-center gap-2">
           <FiBriefcase className="text-white" size={14} />
           <span className="text-xs font-medium text-white uppercase tracking-wider">
             Event
           </span>
         </div>
-        <div className="md:col-span-8 grid grid-cols-3 gap-4">
+        <div className="md:col-span-9 grid grid-cols-3 gap-4">
           <div className="flex items-center gap-2">
             <FiUser className="text-white" size={14} />
             <span className="text-xs font-medium text-white uppercase tracking-wider">
@@ -71,16 +71,31 @@ const EventCard: React.FC<EventCardProps> = ({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4 px-4 py-4 hover:bg-gray-50 transition-colors">
-        <div className="md:col-span-4">
+        <div className="md:col-span-3">
           <div className="flex items-start gap-3">
             <div className="bg-blue-50 p-2 rounded-lg">
               <FiBriefcase className="text-blue-600" size={16} />
             </div>
             <div className="w-full">
-              <h3 className="font-medium text-gray-900">
-                {event.senderOrganization}
-              </h3>
-              <p className="text-sm text-gray-500 mt-1">{event.senderRole}</p>
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="font-medium text-gray-900">
+                    {event.senderOrganization}
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {event.senderRole}
+                  </p>
+                </div>
+
+                <div className="block sm:hidden">
+                  {event?.isApproved === false && (
+                    <div className="flex items-center gap-2">
+                      <FaCheckCircle className="text-green-500 text-xs" />
+                      <span className="text-green-500 text-xs">Approved</span>
+                    </div>
+                  )}
+                </div>
+              </div>
 
               <div className="md:hidden mt-3 space-y-3 w-full">
                 <div className="flex items-center gap-3">
@@ -118,7 +133,7 @@ const EventCard: React.FC<EventCardProps> = ({
           </div>
         </div>
 
-        <div className="hidden md:grid md:col-span-8 grid-cols-3 gap-4">
+        <div className="hidden md:grid md:col-span-9 grid-cols-3 gap-4">
           <div>
             <p className="font-medium text-gray-900">{event.senderName}</p>
           </div>
@@ -147,24 +162,32 @@ const EventCard: React.FC<EventCardProps> = ({
         </div>
       </div>
 
-      <div className="border-t border-gray-200 px-4 py-3">
+      <div className="border-t flex items-center justify-between border-gray-200 px-4 py-3">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex gap-2">
             <button
               onClick={() => handleNavigate("approve", event.id)}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 hover:text-white border border-gray-300 text-gray-500 hover:bg-green-500 cursor-pointer text-sm font-medium rounded-md"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-1.5 hover:text-white border border-gray-300 text-gray-500 hover:bg-green-500 cursor-pointer text-xs font-medium rounded-md"
             >
               <FaCheckCircle size={16} />
               <span>Approve</span>
             </button>
             <button
               onClick={() => handleNavigate("reject", event.id)}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 hover:text-white border border-gray-300 text-gray-500 cursor-pointer hover:bg-red-500  text-sm font-medium rounded-md"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-1.5 hover:text-white border border-gray-300 text-gray-500 cursor-pointer hover:bg-red-500  text-xs font-medium rounded-md"
             >
               <IoIosCloseCircle size={16} />
               <span>Reject</span>
             </button>
           </div>
+        </div>
+        <div className="hidden sm:block">
+          {event?.isApproved === false && (
+            <div className="flex items-center gap-2">
+              <FaCheckCircle className="text-green-500 text-xs" />
+              <span className="text-green-500 text-xs">Approved</span>
+            </div>
+          )}
         </div>
       </div>
     </div>

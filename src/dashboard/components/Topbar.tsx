@@ -59,18 +59,21 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
           >
             <RiMenu2Line className="text-xl md:hidden" />
           </button>
-          <img src={logo} className="w-12 hidden md:block ml-4" alt="logo" />
+          <img src={logo} className="w-6.5 hidden md:block ml-4" alt="logo" />
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center">
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="flex items-center space-x-2 focus:outline-none"
+              className="flex items-start space-x-2 focus:outline-none"
             >
-              <span className="text-gray-600">{authUser?.name}</span>
+              <div className="flex flex-col  p-2 items-start">
+                <span className="text-gray-600">{authUser?.name}</span>
+                <small className="text-[11px]">Admin</small>
+              </div>
               <FaCaretDown
-                className={`text-gray-500 transition-transform duration-200 ${
+                className={`text-gray-500 bg-primary rounded-full text-white  mt-3 cursor-pointer transition-transform duration-200 ${
                   isOpen ? "transform rotate-180" : ""
                 }`}
               />

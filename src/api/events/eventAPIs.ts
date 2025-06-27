@@ -1,7 +1,15 @@
 import type { AxiosInstance } from "axios";
 import type { UniqueResponseFormat } from "../auth/authAPIs";
+import type { EventApproveOrRejectSchemaType } from "../../schema/events/eventSchema";
 
 interface GetPendingApprovalEventsParams {
+  axiosPrivate: AxiosInstance;
+}
+
+interface ApprveOrRejectEventParams {
+  formData: EventApproveOrRejectSchemaType;
+  isApprove: boolean;
+  eventId: string;
   axiosPrivate: AxiosInstance;
 }
 
@@ -32,6 +40,48 @@ export const GetPendingApprovalEvents = async ({
     return response.data;
   } catch (error: any) {
     let errMsg: string = "Error occured during fetching event";
+    if (error?.response?.data?.message) {
+      errMsg = error.response.data.message;
+    } else if (error?.message === "Networ Error") {
+      errMsg = "Service Unavailable";
+    }
+    throw new Error(errMsg);
+  }
+};
+
+export const ApprveOrRejectEvent = async ({
+  formData,
+  eventId,
+  isApprove,
+  axiosPrivate,
+}: ApprveOrRejectEventParams): Promise<UniqueResponseFormat> => {
+  try {
+    let data: any;
+    if (isApprove === true) {
+      data = {
+        eventId: eventId,
+        approverName: formData?.approverName,
+        approvedLetterLink: formData?.file,
+        approverRole: formData?.approverRole,
+        isApproved: isApprove,
+      };
+    }
+    if (isApprove === false) {
+      data = {
+        eventId: eventId,
+        approverName: formData?.approverName,
+        approverRole: formData?.approverRole,
+        isApproved: isApprove,
+        reason: formData?.reason,
+      };
+    }
+    const response = await axiosPrivate.put(
+      `/admin/event/approve`,
+      JSON.stringify(data)
+    );
+    return response.data;
+  } catch (error: any) {
+    let errMsg: string = "Error occured during event approval";
     if (error?.response?.data?.message) {
       errMsg = error.response.data.message;
     } else if (error?.message === "Networ Error") {

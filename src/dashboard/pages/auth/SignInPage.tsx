@@ -26,6 +26,7 @@ const SignInPage: React.FC = () => {
     defaultValues: {
       email: "",
       password: "",
+      role: "Admin",
     },
   });
 
@@ -110,6 +111,37 @@ const SignInPage: React.FC = () => {
                 error={errors.password?.message?.toString()}
               />
             </div>
+
+            {/* <div className="py-3 pl-1">
+              <p className="font-medium text-sm">
+                Select your role <span className="text-red-600">*</span>
+              </p>
+              <div className="flex items-center gap-6 mt-2">
+                <label className="flex text-xs items-center gap-2">
+                  <input
+                    type="radio"
+                    value="Organizer"
+                    {...register("role")}
+                    className="accent-blue-600 size-3 cursor-pointer"
+                  />
+                  Organizer
+                </label>
+                <label className="flex text-xs items-center gap-2">
+                  <input
+                    type="radio"
+                    value="Participant"
+                    {...register("role")}
+                    className="accent-blue-600 size-3 cursor-pointer"
+                  />
+                  Participant
+                </label>
+              </div>
+              {errors.role && (
+                <p className="text-red-600 text-[10px] mt-1">
+                  {errors.role.message}
+                </p>
+              )}
+            </div> */}
 
             <div>
               {isLoading ? (

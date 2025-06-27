@@ -1,10 +1,15 @@
 // src/components/Sidebar.tsx
 import React from "react";
-import { FaCheckCircle, FaHome } from "react-icons/fa";
+import { FaCheckCircle, FaHome, FaRegCheckCircle } from "react-icons/fa";
 import { FaFaceFrown, FaFaceSmile, FaLocationPin } from "react-icons/fa6";
-import { MdEventAvailable } from "react-icons/md";
+import {
+  MdEventAvailable,
+  MdOutlineDashboard,
+  MdOutlineLocationOn,
+} from "react-icons/md";
 import { NavLink } from "react-router-dom";
 import logo from "../../assets/logo.svg";
+import navbarImage from "../../assets/dashboard-img1.jpg";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -13,15 +18,15 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const navItems = [
-    { path: "/dashboard", icon: <FaHome />, label: "Dashboard" },
+    { path: "/dashboard", icon: <MdOutlineDashboard />, label: "Dashboard" },
     {
       path: "/dashboard/venue-management",
-      icon: <FaLocationPin />,
+      icon: <MdOutlineLocationOn className="text-xl" />,
       label: "Venue Management",
     },
     {
       path: "/dashboard/event-approval",
-      icon: <FaCheckCircle />,
+      icon: <FaRegCheckCircle />,
       label: "Event Approvals",
     },
     {
@@ -36,7 +41,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+          className=" fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
           onClick={onClose}
         />
       )}
@@ -48,12 +53,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         } 
         md:translate-x-0 transition-transform duration-200 ease-in-out z-30 w-64 bg-white shadow-lg`}
       >
-        <div className="flex items-center justify-between h-16 px-4 bg-primary text-white">
-          <div>
-            <h1 className="text-xl font-semibold">Event Hub</h1>
-            <FaFaceSmile className="size-4" />
+        <div className="flex items-center justify-between h-16 px-4 bg-gradient-to-t from-stone-900 via-rose-900 to-amber-700  text-white">
+          <div className="flex items-center justify-start gap-2 w-full">
+            <img src={logo} className="w-6" alt="logo_image" />{" "}
+            <h1 className="text-2xl font-semibold">Syncro</h1>
           </div>
-          <img src={logo} className="w-12 md:hidden" alt="logo_image" />
         </div>
 
         <nav className="px-4 py-6">
@@ -80,6 +84,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             ))}
           </ul>
         </nav>
+        <div>
+          <img
+            src={navbarImage}
+            alt="navbar_image"
+            className="w-[max] absolute bottom-0"
+          />
+        </div>
       </aside>
     </>
   );

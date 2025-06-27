@@ -17,26 +17,35 @@ import HIMSTextareaField from "../../../components/HIMSTextareaField";
 import { IoMdCloseCircle } from "react-icons/io";
 import Banner from "../../../components/Banner";
 import approvalImage from "../../../../assets/approval-image.png";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import {
   EventApproveOrRejectSchema,
   type EventApproveOrRejectSchemaType,
 } from "../../../../schema/events/eventSchema";
 import { FiLoader } from "react-icons/fi";
+import toast from "react-hot-toast";
+import { ApprveOrRejectEvent } from "../../../../api/events/eventAPIs";
+import useAxiosPrivate from "../../../../hooks/useAxiosPrivate";
+import { ImSpinner5 } from "react-icons/im";
 
 const EventApproveOrRejectPage: React.FC = () => {
+  const axiosPrivate = useAxiosPrivate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
+  const params = useParams();
   const isApprove = queryParams.get("isApprove") === "true";
   const schema = EventApproveOrRejectSchema(isApprove);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const eventId: string = params?.id || "";
 
   const {
     register,
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
     trigger,
   } = useForm<EventApproveOrRejectSchemaType>({
@@ -68,8 +77,28 @@ const EventApproveOrRejectPage: React.FC = () => {
     // }
   };
 
-  const onSubmit = (data: EventApproveOrRejectSchemaType) => {
-    console.log(data);
+  const onSubmit = async (data: EventApproveOrRejectSchemaType) => {
+    try {
+      setIsSubmitting(true);
+      const response = await ApprveOrRejectEvent({
+        formData: data,
+        eventId,
+        isApprove,
+        axiosPrivate,
+      });
+      if (response.success) {
+        toast.success(`${response?.message?.toString()}`);
+        reset();
+        // navigate('')
+      }
+    } catch (error: any) {
+      toast.error(error?.message ?? "Error occurred during Approve Event", {
+        position: "top-right",
+        className: "text-xs",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -188,23 +217,43 @@ const EventApproveOrRejectPage: React.FC = () => {
               <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
                 {isApprove === true ? (
                   <div className="flex-1">
-                    <button
-                      type="submit"
-                      className="flex cursor-pointer items-center w-max p-2 text-white text-sm bg-green-500 rounded-md"
-                    >
-                      <FiCheck className="mr-2" />
-                      Approve Event
-                    </button>
+                    {isSubmitting ? (
+                      <button
+                        type="submit"
+                        className="flex cursor-pointer items-center w-max p-2 text-white text-sm bg-green-500 rounded-md"
+                      >
+                        <ImSpinner5 className="mr-2" />
+                        Please wait...
+                      </button>
+                    ) : (
+                      <button
+                        type="submit"
+                        className="flex cursor-pointer items-center w-max p-2 text-white text-sm bg-green-500 rounded-md"
+                      >
+                        <FiCheck className="mr-2" />
+                        Approve Event
+                      </button>
+                    )}
                   </div>
                 ) : (
                   <div className="flex-1">
-                    <button
-                      type="submit"
-                      className="flex cursor-pointer items-center w-max p-2 text-white bg-red-500 rounded-md text-sm"
-                    >
-                      <IoMdCloseCircle className="mr-2" />
-                      Reject Event
-                    </button>
+                    {isSubmitting ? (
+                      <button
+                        type="submit"
+                        className="flex cursor-pointer items-center w-max p-2 text-white bg-red-500 rounded-md text-sm"
+                      >
+                        <ImSpinner5 className="mr-2" />
+                        Please wait...
+                      </button>
+                    ) : (
+                      <button
+                        type="submit"
+                        className="flex cursor-pointer items-center w-max p-2 text-white bg-red-500 rounded-md text-sm"
+                      >
+                        <IoMdCloseCircle className="mr-2" />
+                        Reject Event
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
