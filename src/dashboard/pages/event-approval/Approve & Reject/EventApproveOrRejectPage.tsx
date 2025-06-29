@@ -27,6 +27,7 @@ import toast from "react-hot-toast";
 import { ApprveOrRejectEvent } from "../../../../api/events/eventAPIs";
 import useAxiosPrivate from "../../../../hooks/useAxiosPrivate";
 import { ImSpinner5 } from "react-icons/im";
+import HIMSBreadcrumb from "../../../components/HIMSBreadcrumb";
 
 const EventApproveOrRejectPage: React.FC = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -104,6 +105,27 @@ const EventApproveOrRejectPage: React.FC = () => {
   return (
     <div className="min-h-screen px-4">
       <div className="">
+        <div className="pb-2 mb-4 border-b border-gray-300 w-max">
+          <HIMSBreadcrumb
+            links={[
+              {
+                id: 1,
+                displayName: "Go Back",
+                link: "/dashboard/event-approval",
+              },
+              {
+                id: 2,
+                displayName:
+                  isApprove === true ? "Approve Event" : "Reject Event",
+                link:
+                  isApprove === true
+                    ? `/dashboard/event-approval/${eventId}?isApprove=true`
+                    : `/dashboard/event-approval/${eventId}?isApprove=false`,
+                disabled: true,
+              },
+            ]}
+          />
+        </div>
         <div className="text-start mb-8">
           <h1 className="text-3xl font-extrabold text-gray-900">
             Event Approval

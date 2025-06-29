@@ -9,6 +9,7 @@ interface AddVenuesParams {
 
 interface GetAllVenuesParams {
   venueId?: string;
+  pageNumber?: number;
   axiosPrivate: AxiosInstance;
 }
 
@@ -46,6 +47,7 @@ export const AddVenues = async ({
 
 export const GetAllVenues = async ({
   venueId,
+  pageNumber,
   axiosPrivate,
 }: GetAllVenuesParams): Promise<UniqueResponseFormat> => {
   try {
@@ -54,7 +56,7 @@ export const GetAllVenues = async ({
       queryParams.append("venueId", venueId.toString());
     }
     const response = await axiosPrivate.get(
-      `/admin/venues?${queryParams.toString()}`
+      `/admin/venues?${queryParams.toString()}&pageNumber=${pageNumber}&pageSize=${6}`
     );
     return response.data;
   } catch (error: any) {

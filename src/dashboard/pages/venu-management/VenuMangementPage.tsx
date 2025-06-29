@@ -8,13 +8,17 @@ import { useQuery } from "@tanstack/react-query";
 import { FETCH_VENUES } from "../../../reactQuery/query";
 import { GetAllVenues } from "../../../api/venue-management/venueAPIs";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
+import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
+
+const PAGE_SIZE: number = 6;
 
 const VenuMangementPage: React.FC = () => {
   const axiosPrivate = useAxiosPrivate();
   const [venueId, setVenueId] = useState<string>("");
+  const [pageNumber, setPageNumber] = useState<number>(1);
   const { data: venues, isLoading: isLoadingFetchVenues } = useQuery({
-    queryKey: [FETCH_VENUES],
-    queryFn: () => GetAllVenues({ axiosPrivate }),
+    queryKey: [FETCH_VENUES, pageNumber],
+    queryFn: () => GetAllVenues({ axiosPrivate, pageNumber }),
   });
   // const venues: any[] = [
   //   {
@@ -52,6 +56,20 @@ const VenuMangementPage: React.FC = () => {
     console.log("Delete venue:", id);
   };
 
+  // Handle pagination logics
+  const handleNextPage = (): void => {
+    if (venues?.data.length === PAGE_SIZE) {
+      setPageNumber((prev) => prev + 1);
+    }
+  };
+
+  const handlePrevPage = (): void => {
+    if (pageNumber > 1) {
+      setPageNumber((prev) => prev - 1);
+    }
+  };
+  const venuesLength: number = venues?.data?.length ?? 0;
+
   return (
     <div className="min-h-screen px-4">
       <div>
@@ -65,27 +83,65 @@ const VenuMangementPage: React.FC = () => {
           />
         </div>
         {!venueId ? (
-          <div className="px-4">
-            <h1 className="text-xl font-semibold border-b pb-2 mb-4 border-gray-400">
-              Add Venue
+          <div className="px-4 rounded-md p-4 mb-4 bg-white shadow-lg">
+            <h1 className="w-max text-primary rounded-md text-sm font-semibold pb-2 mb-4 border-gray-400">
+              Add Venue for Event
             </h1>
             <AddVenueForm setVenueId={setVenueId} />
           </div>
         ) : (
           <button
-            className="px-4 py-2 bg-primary text-white rounded-md text-sm cursor-pointer"
+            className="px-4 py-2 mb-6 bg-primary text-white rounded-md text-sm cursor-pointer"
             onClick={() => setVenueId("")}
           >
             Add Venue
           </button>
         )}
 
-        <div className="rounded-xl px-4">
+        <div className="rounded-xl">
           <div>
             <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-300 pb-2">
               Recent Venues
             </h2>
-            <div>// pagination section</div>
+            <div className="mb-4">
+              <div className="flex items-center justify-between">
+                <p className="text-lg font-bold">Page No: {pageNumber}</p>
+
+                <div className="flex items-center justify-center md:justify-end">
+                  <button
+                    onClick={handlePrevPage}
+                    disabled={pageNumber === 1}
+                    className={`flex items-center justify-center p-2 rounded-lg ${
+                      pageNumber === 1
+                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        : "bg-primary text-white hover:bg-primary/90"
+                    }`}
+                  >
+                    <span>
+                      <MdNavigateBefore className="text-lg" />
+                    </span>
+                  </button>
+
+                  <span className="min-w-[48px] text-center text-md text-black font-semibold">
+                    <p>{pageNumber}</p>
+                  </span>
+
+                  <button
+                    onClick={handleNextPage}
+                    disabled={venues?.data < PAGE_SIZE}
+                    className={`flex items-center justify-center p-2 rounded-lg ${
+                      venuesLength < PAGE_SIZE
+                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        : "bg-primary text-white hover:bg-primary/90"
+                    }`}
+                  >
+                    <span>
+                      <MdNavigateNext className="text-lg" />
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
           {isLoadingFetchVenues ? (
             Array.from({ length: 3 }).map((_, index) => (

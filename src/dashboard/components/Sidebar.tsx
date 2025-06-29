@@ -1,7 +1,6 @@
 // src/components/Sidebar.tsx
 import React from "react";
-import { FaCheckCircle, FaHome, FaRegCheckCircle } from "react-icons/fa";
-import { FaFaceFrown, FaFaceSmile, FaLocationPin } from "react-icons/fa6";
+import { FaRegCheckCircle } from "react-icons/fa";
 import {
   MdEventAvailable,
   MdOutlineDashboard,
@@ -27,7 +26,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     {
       path: "/dashboard/event-approval",
       icon: <FaRegCheckCircle />,
-      label: "Event Approvals",
+      label: "Event Management",
     },
     {
       path: "/dashboard/events",
@@ -62,14 +61,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
         <nav className="px-4 py-6">
           <ul className="space-y-2">
-            {navItems.map((item) => (
-              <li key={item.path}>
+            {navItems.map((item, index) => (
+              <li key={index + 1}>
                 <NavLink
                   to={item.path}
+                  end={item.path === "/dashboard"}
                   className={({ isActive }) =>
-                    `flex items-center px-4 py-3 rounded-lg ${
+                    `flex items-center p-2 rounded-r-xl ${
                       isActive
-                        ? "bg-indigo-50 text-indigo-600"
+                        ? "bg-primary text-white"
                         : "text-gray-600 hover:bg-gray-100"
                     }`
                   }
@@ -78,7 +78,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   <span className="material-icons-outlined mr-3">
                     {item.icon}
                   </span>
-                  <span>{item.label}</span>
+                  <span className="text-sm">{item.label}</span>
                 </NavLink>
               </li>
             ))}

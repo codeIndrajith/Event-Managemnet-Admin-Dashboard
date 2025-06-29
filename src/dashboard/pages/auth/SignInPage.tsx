@@ -78,7 +78,8 @@ const SignInPage: React.FC = () => {
             <h1 className="text-3xl font-bold text-gray-900 uppercase">
               Sign In
             </h1>
-            <p className="mt-2 text-gray-600">
+            <p className="text-sm font-semibold">Wellcome to Dashboard</p>
+            {/* <p className="mt-2 text-gray-600">
               Don't have an account?{" "}
               <Link
                 to="/signup"
@@ -86,7 +87,7 @@ const SignInPage: React.FC = () => {
               >
                 Sign up
               </Link>
-            </p>
+            </p> */}
           </div>
 
           <form className="space-y-2" onSubmit={handleSubmit(onSubmit)}>
