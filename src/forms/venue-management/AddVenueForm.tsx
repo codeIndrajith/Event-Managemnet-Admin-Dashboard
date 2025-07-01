@@ -77,18 +77,16 @@ const AddVenueForm: React.FC<AddVenueFormProps> = ({
     { id: 2, type: "outdoor" },
   ];
 
-  const onSubmit = (data: VenuSchemaType) => {
-    addVenue(data);
-  };
   const { mutateAsync: addVenue } = useMutation({
     mutationFn: (data: VenuSchemaType) =>
       venueId
         ? UpdateVenue({ formData: data, axiosPrivate, venueId })
         : AddVenues({ formData: data, axiosPrivate }),
     onSuccess: () => {
+      setIsProcessing(false);
       queryClinet.invalidateQueries({
         queryKey: [FETCH_VENUES],
-        exact: true,
+        // exact: true,
       });
 
       reset({
@@ -120,6 +118,11 @@ const AddVenueForm: React.FC<AddVenueFormProps> = ({
       });
     },
   });
+
+  const onSubmit = async (data: VenuSchemaType) => {
+    setIsProcessing(true);
+    await addVenue(data);
+  };
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
