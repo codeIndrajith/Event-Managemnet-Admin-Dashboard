@@ -10,6 +10,7 @@ import {
 } from "../../../api/events/eventAPIs";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import type { UniqueResponseFormat } from "../../../api/auth/authAPIs";
+import EventCardSkelton from "./components/EventCardSkelton";
 
 interface Event {
   id: string;
@@ -42,17 +43,9 @@ const EventApprovalPage: React.FC = () => {
     console.log(id);
   };
 
-  // const filteredEvents = events.filter((event) =>
-  //   filter === "all" ? true : event.isApproved === filter
-  // );
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
+  const filteredEvents = pendingApprovalEvents?.data.filter((event: any) =>
+    filter === "all" ? true : event.isApproved === filter
+  );
 
   return (
     <div className="min-h-screen px-4">
@@ -83,21 +76,64 @@ const EventApprovalPage: React.FC = () => {
                 : f.charAt(0).toUpperCase() + f.slice(1)}
             </button>
           ))}
-        </div> */}
+        </div>
         <div className="border-b pb-2 mb-2">
           <h1 className="text-lg font-semibold">Pending Approval Events</h1>
-        </div>
+        </div> */}
 
-        <div className="w-full">
+        {isLoading ? (
+          Array.from({ length: 2 }).map((_, index) => (
+            <div key={index + 1}>
+              <EventCardSkelton />
+            </div>
+          ))
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            {pendingApprovalEvents?.data.map((event: EventResponse) => (
+              <EventCard key={event.id} event={event} isPublic={false} />
+            ))}
+
+            {pendingApprovalEvents?.data.length === 0 && (
+              <div className="col-span-full text-center py-12">
+                <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                  <svg
+                    className="w-12 h-12 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="1.5"
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                    ></path>
+                  </svg>
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-1">
+                  No events found
+                </h3>
+                <p className="text-gray-500">
+                  {filter === "all"
+                    ? "There are no events to display"
+                    : `No ${filter} events found`}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-2">
           {pendingApprovalEvents && pendingApprovalEvents.data.length > 0 ? (
-            pendingApprovalEvents.data.map((event: EventResponse) => (
-              <EventCard
-                key={event.id}
-                event={event}
-                onApprove={handleApprove}
-                onReject={handleReject}
-              />
-            ))
+            <>
+              {isLoading
+                ? Array.from({ length: 2 }).map((_, index) => (
+                    <EventCardSkelton key={index + 1} />
+                  ))
+                : pendingApprovalEvents.data.map((event: EventResponse) => (
+                    <EventCard key={event.id} event={event} isPublic={false} />
+                  ))}
+            </>
           ) : (
             <div className="col-span-full text-center py-12">
               <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
@@ -118,14 +154,15 @@ const EventApprovalPage: React.FC = () => {
               <h3 className="text-lg font-medium text-gray-900 mb-1">
                 No events found
               </h3>
-              <p className="text-gray-500">
-                {filter === "all"
-                  ? "There are no events to display"
-                  : `No ${filter} events found`}
-              </p>
+             
             </div>
           )}
-        </div>
+        </div> */}
+        <p className="text-gray-500">
+          {filter === "all"
+            ? "There are no events to display"
+            : `No ${filter} events found`}
+        </p>
       </div>
     </div>
   );

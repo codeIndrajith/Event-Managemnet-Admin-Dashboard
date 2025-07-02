@@ -17,7 +17,7 @@ import HIMSTextareaField from "../../../components/HIMSTextareaField";
 import { IoMdCloseCircle } from "react-icons/io";
 import Banner from "../../../components/Banner";
 import approvalImage from "../../../../assets/approval-image.png";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   EventApproveOrRejectSchema,
   type EventApproveOrRejectSchemaType,
@@ -28,9 +28,11 @@ import { ApprveOrRejectEvent } from "../../../../api/events/eventAPIs";
 import useAxiosPrivate from "../../../../hooks/useAxiosPrivate";
 import { ImSpinner5 } from "react-icons/im";
 import HIMSBreadcrumb from "../../../components/HIMSBreadcrumb";
+import { uploadFileToFirebase } from "../../../../uitls/fileUpload";
 
 const EventApproveOrRejectPage: React.FC = () => {
   const axiosPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const params = useParams();
@@ -63,19 +65,19 @@ const EventApproveOrRejectPage: React.FC = () => {
       return;
     }
 
-    // try {
-    //   setIsUploading(true);
-    //   setSelectedFile(file);
-    //   const fileUrl = await uploadFileToCloudinary(file);
-    //   setValue("file", fileUrl, { shouldValidate: true });
-    //   trigger("file");
-    // } catch (error) {
-    //   console.error("Upload error", error);
-    //   setValue("file", "", { shouldValidate: true });
-    //   trigger("file");
-    // } finally {
-    //   setIsUploading(false);
-    // }
+    try {
+      setIsUploading(true);
+      setSelectedFile(file);
+      const fileUrl = await uploadFileToFirebase(file, "Approve-letter-folder");
+      setValue("file", fileUrl, { shouldValidate: true });
+      trigger("file");
+    } catch (error) {
+      console.error("Upload error", error);
+      setValue("file", "", { shouldValidate: true });
+      trigger("file");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const onSubmit = async (data: EventApproveOrRejectSchemaType) => {
@@ -89,8 +91,13 @@ const EventApproveOrRejectPage: React.FC = () => {
       });
       if (response.success) {
         toast.success(`${response?.message?.toString()}`);
-        reset();
-        // navigate('')
+        setSelectedFile(null);
+        reset({
+          file: "",
+          approverName: "",
+          approverRole: "",
+        });
+        navigate(`/dashboard/event-approval`);
       }
     } catch (error: any) {
       toast.error(error?.message ?? "Error occurred during Approve Event", {
@@ -244,7 +251,7 @@ const EventApproveOrRejectPage: React.FC = () => {
                         type="submit"
                         className="flex cursor-pointer items-center w-max p-2 text-white text-sm bg-green-500 rounded-md"
                       >
-                        <ImSpinner5 className="mr-2" />
+                        <ImSpinner5 className="mr-2 animate-spin" />
                         Please wait...
                       </button>
                     ) : (
@@ -264,7 +271,7 @@ const EventApproveOrRejectPage: React.FC = () => {
                         type="submit"
                         className="flex cursor-pointer items-center w-max p-2 text-white bg-red-500 rounded-md text-sm"
                       >
-                        <ImSpinner5 className="mr-2" />
+                        <ImSpinner5 className="mr-2 animate-spin" />
                         Please wait...
                       </button>
                     ) : (

@@ -131,6 +131,7 @@ const AddVenueForm: React.FC<AddVenueFormProps> = ({
             Icon={FaLocationDot}
             displayLabel="Venue Name"
             placeholderText="Add Venue Name"
+            classNames="text-xs"
             isRequired
             {...register("venueName")}
             error={errors.venueName?.message?.toString()}
@@ -143,6 +144,7 @@ const AddVenueForm: React.FC<AddVenueFormProps> = ({
             displayLabel="Location Type"
             defaultOptionText="Select Location Type"
             options={locationType}
+            classNames="text-xs"
             optionKey="id"
             optionValue="type"
             isRequired
@@ -159,6 +161,7 @@ const AddVenueForm: React.FC<AddVenueFormProps> = ({
             displayLabel="Max Attendees"
             placeholderText="Enter Max Attendees"
             isRequired
+            classNames="text-xs"
             min={0}
             {...register("maxAttendees", {
               setValueAs: (value: string) => (value ? Number(value) : 0),
@@ -185,7 +188,8 @@ const AddVenueForm: React.FC<AddVenueFormProps> = ({
           >
             {isProcessing ? (
               <div className="flex items-center gap-2 justify-center">
-                <ImSpinner5 /> <span>Processing...</span>
+                <ImSpinner5 className="animate-spin" />{" "}
+                <span>Processing...</span>
               </div>
             ) : (
               "Update Venue"
@@ -198,7 +202,8 @@ const AddVenueForm: React.FC<AddVenueFormProps> = ({
           >
             {isProcessing ? (
               <div className="flex items-center gap-2 justify-center">
-                <ImSpinner5 /> <span>Processing...</span>
+                <ImSpinner5 className="animate-spin" />{" "}
+                <span>Processing...</span>
               </div>
             ) : (
               "Add Venue"

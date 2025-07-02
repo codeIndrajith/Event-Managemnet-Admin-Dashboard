@@ -18,15 +18,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 interface EventCardProps {
   event: EventResponse;
-  onApprove: (id: string) => void;
-  onReject: (id: string) => void;
+  isPublic?: boolean;
 }
 
-const EventCard: React.FC<EventCardProps> = ({
-  event,
-  onApprove,
-  onReject,
-}) => {
+const EventCard: React.FC<EventCardProps> = ({ event, isPublic }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -40,155 +35,146 @@ const EventCard: React.FC<EventCardProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-4">
-      <div className="hidden bg-primary md:grid md:grid-cols-12 bg-gray-50 px-4 py-3 border-b border-gray-200">
-        <div className="md:col-span-3 flex items-center gap-2">
-          <FiBriefcase className="text-white" size={14} />
-          <span className="text-xs font-medium text-white uppercase tracking-wider">
-            Event
-          </span>
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mt-4">
+      {/* Header with subtle accent */}
+      <div className="px-6 py-3 bg-primary border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-white rounded-lg">
+            <FiBriefcase className="text-black" size={16} />
+          </div>
+          <h3 className="text-md font-semibold text-white">Event Details</h3>
         </div>
-        <div className="md:col-span-9 grid grid-cols-3 gap-4">
-          <div className="flex items-center gap-2">
-            <FiUser className="text-white" size={14} />
-            <span className="text-xs font-medium text-white uppercase tracking-wider">
-              Organizer
-            </span>
+      </div>
+
+      {/* Data Grid - Modern Table Style */}
+      <div className="grid grid-cols-1 md:grid-cols-2">
+        {/* Organization */}
+        <div className="px-5 py-4 border-b border-r border-gray-100">
+          <div className="flex items-start gap-4">
+            <div className="mt-0.5">
+              <FiBriefcase className="text-gray-400" size={18} />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-500 mb-1">
+                Organization
+              </p>
+              <p className="font-medium text-xs text-gray-900">
+                {event.senderOrganization}
+              </p>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <FiCalendar className="text-white" size={14} />
-            <span className="text-xs font-medium text-white uppercase tracking-wider">
-              When
-            </span>
+        </div>
+
+        {/* Organizer */}
+        <div className="px-5 py-4 border-b border-gray-100">
+          <div className="flex items-start gap-4">
+            <div className="mt-0.5">
+              <FiUser className="text-gray-400" size={18} />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-500 mb-1">
+                Organizer
+              </p>
+              <p className="font-medium text-xs text-gray-900">
+                {event.senderName}
+              </p>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <FiMapPin className="text-white" size={14} />
-            <span className="text-xs font-medium text-white uppercase tracking-wider">
-              Where
-            </span>
+        </div>
+
+        {/* Date & Time */}
+        <div className="px-5 py-4 border-b border-r border-gray-100">
+          <div className="flex items-start gap-4">
+            <div className="mt-0.5">
+              <FiCalendar className="text-gray-400" size={18} />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-500 mb-1">
+                Date & Time
+              </p>
+              <p className="font-medium text-xs text-gray-900">
+                {event.eventDate}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">{event.eventTime}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Location */}
+        <div className="px-5 py-4 border-b border-gray-100">
+          <div className="flex items-start gap-4">
+            <div className="mt-0.5">
+              <FiMapPin className="text-gray-400" size={18} />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-500 mb-1">Location</p>
+              <p className="font-medium text-xs text-gray-900">
+                {event.eventLocation}
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 px-4 py-4 hover:bg-gray-50 transition-colors">
-        <div className="md:col-span-3">
-          <div className="flex items-start gap-3">
-            <div className="bg-blue-50 p-2 rounded-lg">
-              <FiBriefcase className="text-blue-600" size={16} />
-            </div>
-            <div className="w-full">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="font-medium text-gray-900">
-                    {event.senderOrganization}
-                  </h3>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {event.senderRole}
-                  </p>
-                </div>
-
-                <div className="block sm:hidden">
-                  {event?.isApproved === false && (
-                    <div className="flex items-center gap-2">
-                      <FaCheckCircle className="text-green-500 text-xs" />
-                      <span className="text-green-500 text-xs">Approved</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="md:hidden mt-3 space-y-3 w-full">
-                <div className="flex items-center gap-3">
-                  <FiUser className="text-gray-400 flex-shrink-0" size={16} />
-                  <div>
-                    <p className="text-sm text-gray-500">Organizer</p>
-                    <p className="font-medium text-gray-900">
-                      {event.senderName}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <FiCalendar
-                    className="text-gray-400 flex-shrink-0"
-                    size={16}
-                  />
-                  <div>
-                    <p className="text-sm text-gray-500">When</p>
-                    <p className="font-medium text-gray-900">
-                      {event.eventDate} at {event.eventTime}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <FiMapPin className="text-gray-400 flex-shrink-0" size={16} />
-                  <div>
-                    <p className="text-sm text-gray-500">Where</p>
-                    <p className="font-medium text-gray-900">
-                      {event.eventLocation}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+      {/* Document Section */}
+      <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <FaRegFilePdf className="text-red-500" size={18} />
+            <span className="text-sm font-medium text-gray-700">
+              Approval Letter
+            </span>
           </div>
-        </div>
-
-        <div className="hidden md:grid md:col-span-9 grid-cols-3 gap-4">
-          <div>
-            <p className="font-medium text-gray-900">{event.senderName}</p>
-          </div>
-          <div>
-            <p className="font-medium text-gray-900">{event.eventDate}</p>
-            <p className="text-sm text-gray-500 mt-1">{event.eventTime}</p>
-          </div>
-          <div>
-            <p className="font-medium text-gray-900 line-clamp-2">
-              {event.eventLocation}
-            </p>
-          </div>
-        </div>
-
-        <div className="col-span-full">
           <a
             href={event.letterLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 px-3 py-2 rounded-md hover:bg-blue-50 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 bg-blue-50 rounded-lg transition-all"
           >
-            <FaRegFilePdf size={14} />
-            <span>View Approval Letter</span>
-            <FiDownload className="ml-1" size={14} />
+            View Document
+            <FiDownload size={16} />
           </a>
         </div>
       </div>
 
-      <div className="border-t flex items-center justify-between border-gray-200 px-4 py-3">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="flex gap-2">
-            <button
-              onClick={() => handleNavigate("approve", event.id)}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-1.5 hover:text-white border border-gray-300 text-gray-500 hover:bg-green-500 cursor-pointer text-xs font-medium rounded-md"
-            >
-              <FaCheckCircle size={16} />
-              <span>Approve</span>
-            </button>
-            <button
-              onClick={() => handleNavigate("reject", event.id)}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-1.5 hover:text-white border border-gray-300 text-gray-500 cursor-pointer hover:bg-red-500  text-xs font-medium rounded-md"
-            >
-              <IoIosCloseCircle size={16} />
-              <span>Reject</span>
-            </button>
-          </div>
-        </div>
-        <div className="hidden sm:block">
-          {event?.isApproved === false && (
-            <div className="flex items-center gap-2">
-              <FaCheckCircle className="text-green-500 text-xs" />
-              <span className="text-green-500 text-xs">Approved</span>
+      {/* Footer Actions */}
+      <div className="px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="flex items-center gap-2">
+          {event?.isApproved === true ? (
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-full">
+              <FaCheckCircle className="text-green-600" size={16} />
+              <span className="text-sm font-medium text-green-600">
+                Approved
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-yellow-50 rounded-full">
+              <FaCheckCircle className="text-yellow-600" size={16} />
+              <span className="text-sm font-medium text-yellow-800">
+                Pending
+              </span>
             </div>
           )}
         </div>
+
+        {event?.isApproved === false && isPublic === false && (
+          <div className="flex gap-3 w-full sm:w-auto">
+            <button
+              onClick={() => handleNavigate("approve", event.id)}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
+            >
+              <FaCheckCircle size={16} />
+              Approve
+            </button>
+            <button
+              onClick={() => handleNavigate("reject", event.id)}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+            >
+              <IoIosCloseCircle size={16} />
+              Reject
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

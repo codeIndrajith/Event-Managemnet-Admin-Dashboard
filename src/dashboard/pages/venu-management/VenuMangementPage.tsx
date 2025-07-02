@@ -9,6 +9,7 @@ import { FETCH_VENUES } from "../../../reactQuery/query";
 import { GetAllVenues } from "../../../api/venue-management/venueAPIs";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
+import { FaMapMarkerAlt } from "react-icons/fa";
 
 const PAGE_SIZE: number = 6;
 
@@ -83,10 +84,13 @@ const VenuMangementPage: React.FC = () => {
           />
         </div>
         {!venueId ? (
-          <div className="px-4 rounded-md p-4 mb-4 bg-white shadow-lg">
-            <h1 className="w-max text-primary rounded-md text-sm font-semibold pb-2 mb-4 border-gray-400">
-              Add Venue for Event
-            </h1>
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+            <div className="flex items-center gap-3 pb-4 mb-6 border-b border-gray-100">
+              <FaMapMarkerAlt className="text-indigo-600 text-lg" />
+              <h2 className="text-lg font-semibold text-gray-800">
+                Add Event Venue
+              </h2>
+            </div>
             <AddVenueForm setVenueId={setVenueId} />
           </div>
         ) : (
