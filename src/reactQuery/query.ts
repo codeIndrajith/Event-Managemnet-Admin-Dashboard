@@ -3,3 +3,6 @@ export const FETCH_VENUE = "get-single-venue";
 
 // EVENT QUERIES
 export const FETCH_PENDING_APPROVAL_EVENTS = "get-pending-approval-events";
+
+// DASHBOARD DATA COUNTS
+export const ADMIN_DASHBOARD_DATA_COUNT = "dashboard-data-counts";

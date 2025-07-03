@@ -2,7 +2,7 @@ import "./App.css";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import DashboardLayout from "./layouts/DashboardLayouts";
-import HomePage from "./dashboard/pages/HomePage";
+import HomePage from "./dashboard/pages/home-pages/HomePage";
 import VenuMangementPage from "./dashboard/pages/venu-management/VenuMangementPage";
 import EventApprovalPage from "./dashboard/pages/event-approval/EventApprovalPage";
 import AllEventsPage from "./dashboard/pages/events/AllEventsPage";

@@ -4,6 +4,7 @@ import type { EventApproveOrRejectSchemaType } from "../../schema/events/eventSc
 
 interface GetPendingApprovalEventsParams {
   axiosPrivate: AxiosInstance;
+  limit?: number;
 }
 
 interface ApprveOrRejectEventParams {
@@ -34,9 +35,16 @@ export interface EventResponse {
 
 export const GetPendingApprovalEvents = async ({
   axiosPrivate,
+  limit,
 }: GetPendingApprovalEventsParams): Promise<UniqueResponseFormat> => {
   try {
-    const response = await axiosPrivate.get(`/admin/pending-approval-event/`);
+    const queryParams = new URLSearchParams();
+    if (limit) {
+      queryParams.append("limit", limit.toString());
+    }
+    const response = await axiosPrivate.get(
+      `/admin/pending-approval-event/?${queryParams.toString()}`
+    );
     return response.data;
   } catch (error: any) {
     let errMsg: string = "Error occured during fetching event";

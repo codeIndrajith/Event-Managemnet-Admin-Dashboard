@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import EventCard from "../event-approval/components/EventCard";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
@@ -11,9 +11,6 @@ import EventCardSkelton from "../event-approval/components/EventCardSkelton";
 
 const AllEventsPage: React.FC = () => {
   const axiosPrivate = useAxiosPrivate();
-  const [filter, setFilter] = useState<
-    "all" | "pending" | "approved" | "rejected"
-  >("all");
   const { data: pendingApprovalEvents, isLoading } = useQuery({
     queryKey: [FETCH_PENDING_APPROVAL_EVENTS],
     queryFn: () => GetPendingApprovalEvents({ axiosPrivate }),
@@ -52,11 +49,7 @@ const AllEventsPage: React.FC = () => {
               <h3 className="text-lg font-medium text-gray-900 mb-1">
                 No events found
               </h3>
-              <p className="text-gray-500">
-                {filter === "all"
-                  ? "There are no events to display"
-                  : `No ${filter} events found`}
-              </p>
+              <p>There are no events to display</p>
             </div>
           )}
         </div>

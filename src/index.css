@@ -3,7 +3,12 @@
 @layer utilities {
   /* Gradient background */
   .bg-primary {
-    background: linear-gradient(135deg, #0a192f 0%, #172a45 50%, #1e3b58 100%);
+    background: #00b0bd;
+    background: linear-gradient(
+      321deg,
+      rgba(0, 176, 189, 1) 0%,
+      rgba(9, 9, 46, 1) 66%
+    );
   }
 
   /* Solid color */

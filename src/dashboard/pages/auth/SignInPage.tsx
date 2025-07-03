@@ -150,7 +150,7 @@ const SignInPage: React.FC = () => {
                   type="submit"
                   className="w-full flex items-center gap-3 justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary cursor-pointer"
                 >
-                  <ImSpinner3 /> Please wait...
+                  <ImSpinner3 className="animate-spin" /> Please wait...
                 </button>
               ) : (
                 <button

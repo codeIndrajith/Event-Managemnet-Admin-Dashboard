@@ -1,65 +1,12 @@
 // src/components/RecentEventsTable.tsx
 import React from "react";
+import type { EventResponse } from "../../../api/events/eventAPIs";
 
-interface Event {
-  id: string;
-  name: string;
-  organizer: string;
-  date: string;
-  venue: string;
-  status: "approved" | "pending" | "rejected";
+interface RecentEventsTableProps {
+  events: EventResponse[];
 }
 
-const RecentEventsTable: React.FC = () => {
-  const events: Event[] = [
-    {
-      id: "1",
-      name: "Tech Conference 2023",
-      organizer: "Tech Org",
-      date: "2023-11-15",
-      venue: "Convention Center",
-      status: "approved",
-    },
-    {
-      id: "2",
-      name: "Music Festival",
-      organizer: "Music Group",
-      date: "2023-12-05",
-      venue: "Central Park",
-      status: "pending",
-    },
-    {
-      id: "3",
-      name: "Business Expo",
-      organizer: "Chamber of Commerce",
-      date: "2023-10-28",
-      venue: "Grand Hotel",
-      status: "approved",
-    },
-    {
-      id: "4",
-      name: "Art Exhibition",
-      organizer: "Art Society",
-      date: "2023-11-10",
-      venue: "Modern Art Gallery",
-      status: "rejected",
-    },
-    {
-      id: "5",
-      name: "Food Fair",
-      organizer: "Local Vendors",
-      date: "2023-11-22",
-      venue: "Town Square",
-      status: "pending",
-    },
-  ];
-
-  const statusColors = {
-    approved: "bg-green-100 text-green-800",
-    pending: "bg-yellow-100 text-yellow-800",
-    rejected: "bg-red-100 text-red-800",
-  };
-
+const RecentEventsTable: React.FC<RecentEventsTableProps> = ({ events }) => {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200">
@@ -83,27 +30,55 @@ const RecentEventsTable: React.FC = () => {
           {events.map((event) => (
             <tr key={event.id}>
               <td className="px-4 py-3 whitespace-nowrap">
-                <div className="font-medium text-gray-900">{event.name}</div>
-                <div className="text-sm text-gray-500">{event.organizer}</div>
+                <div className="font-medium text-gray-900">
+                  {event.eventName}
+                </div>
+                <div className="text-sm text-gray-500">{event.senderName}</div>
               </td>
               <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                {new Date(event.date).toLocaleDateString()}
+                {event.eventDate}
               </td>
               <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                {event.venue}
+                {event.eventLocation}
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
-                <span
-                  className={`px-2 py-1 text-xs font-semibold rounded-md ${
-                    statusColors[event.status]
-                  }`}
-                >
-                  {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
-                </span>
+                {event?.isApproved === true ? (
+                  <span className="text-xs text-white bg-green-500 py-1 px-3 rounded-sm">
+                    Approved
+                  </span>
+                ) : (
+                  <span className="text-xs text-white bg-yellow-500 py-1 px-3 rounded-sm">
+                    Pending
+                  </span>
+                )}
               </td>
             </tr>
           ))}
         </tbody>
+
+        {events?.length === 0 && (
+          <div className="col-span-full text-center py-12">
+            <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+              <svg
+                className="w-12 h-12 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="1.5"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                ></path>
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-1">
+              No events found
+            </h3>
+            <p>There are no events to display</p>
+          </div>
+        )}
       </table>
     </div>
   );
