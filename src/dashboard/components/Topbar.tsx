@@ -3,7 +3,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { FaUser } from "react-icons/fa6";
 import { RiMenu2Line } from "react-icons/ri";
 import logo from "../../assets/logo.svg";
-import { FaCaretDown, FaCog, FaEnvelope, FaSignOutAlt } from "react-icons/fa";
+import {
+  FaCaretDown,
+  FaCog,
+  FaEnvelope,
+  FaSignOutAlt,
+  FaUserCircle,
+} from "react-icons/fa";
 import {
   useAppDispatch,
   useAppSelector,
@@ -11,6 +17,11 @@ import {
 import { logout, selectAuthSliceUser } from "../../redux/slices/authSlice";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import Overlay from "./modals/Overlay";
+import Modal from "./modals/Modal";
+import HIMSTextField from "./HIMSTextField";
+import HIMSEmailField from "./HimsEmailField";
+import { MdCancel, MdEmail } from "react-icons/md";
 
 interface TopBarProps {
   onMenuClick: () => void;
@@ -18,6 +29,7 @@ interface TopBarProps {
 
 const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [openProfileModal, setOpenProfileModal] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const authUser = useAppSelector(selectAuthSliceUser);
   const dispatch = useAppDispatch();
@@ -87,16 +99,15 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
                   : "opacity-0 -translate-y-2 pointer-events-none"
               }`}
             >
-              <div className="px-4 py-2 border-b border-gray-100">
-                <p className="text-sm font-medium text-gray-700">
-                  Signed in as
-                </p>
-                <p className="text-sm text-gray-500 truncate">
-                  {authUser?.email}
-                </p>
+              <div className="px-4 bg-primary py-2 border-b border-gray-100">
+                <p className="text-sm font-medium text-white">Signed in as</p>
+                <p className="text-sm text-white truncate">{authUser?.email}</p>
               </div>
 
-              <button className="w-full cursor-pointer flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150">
+              <button
+                onClick={() => setOpenProfileModal(true)}
+                className="w-full cursor-pointer flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150"
+              >
                 <FaUser className="mr-3 text-gray-400" />
                 Profile
               </button>
@@ -114,6 +125,57 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
           </div>
         </div>
       </div>
+
+      {openProfileModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity duration-300">
+          <div
+            className="absolute inset-0"
+            onClick={() => setOpenProfileModal(false)}
+            aria-label="Close modal"
+          ></div>
+          <div className="relative w-full max-w-md mx-4 bg-white rounded-md shadow-2xl p-6 sm:p-8 transform transition-all duration-300 scale-100 hover:scale-[1.02]">
+            <div className="flex items-center justify-center gap-2 mb-3 bg-primary p-2 rounded-md">
+              <FaUserCircle className="text-lg text-white" />
+              <h2 className="text-lg font-semibold text-white">Profile Edit</h2>
+            </div>
+
+            <form className="">
+              <div>
+                <HIMSTextField
+                  Icon={FaUser}
+                  displayLabel="Username"
+                  classNames="text-xs"
+                  placeholderText="Enter your name"
+                />
+              </div>
+
+              <div>
+                <HIMSEmailField
+                  displayLabel="Email"
+                  classNames="text-xs"
+                  placeholderText="Enter your email"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-3 mt-6">
+                <button
+                  type="button"
+                  className="px-4 py-2 cursor-pointer text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors duration-200"
+                  onClick={() => setOpenProfileModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 cursor-pointer text-sm font-medium text-white bg-primary rounded-md transition-colors duration-200"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

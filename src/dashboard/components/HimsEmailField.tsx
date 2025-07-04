@@ -1,4 +1,5 @@
 import React from "react";
+import { MdEmail } from "react-icons/md";
 
 interface HIMSEmailFieldProps {
   displayLabel?: string;
@@ -35,9 +36,9 @@ const HIMSEmailField = React.forwardRef<HTMLInputElement, HIMSEmailFieldProps>(
         {displayLabel && (
           <label
             htmlFor={name}
-            className="block text-gray-700 font-semibold mb-2"
+            className="flex items-center gap-2 text-gray-700 font-semibold mb-2"
           >
-            {displayLabel}{" "}
+            <MdEmail className="text-blue-500 text-lg" /> {displayLabel}{" "}
             {isRequired && <span className="text-red-600">*</span>}
           </label>
         )}
