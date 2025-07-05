@@ -33,6 +33,7 @@ const PersistAuth: React.FC = () => {
               name: response.data?.name,
               email: response.data?.email,
               role: response.data?.role,
+              profileImage: response.data.profileImage,
             },
           };
           dispatch(setAuthUser(authData));

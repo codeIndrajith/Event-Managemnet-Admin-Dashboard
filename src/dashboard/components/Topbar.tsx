@@ -3,13 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { FaUser } from "react-icons/fa6";
 import { RiMenu2Line } from "react-icons/ri";
 import logo from "../../assets/logo.svg";
-import {
-  FaCaretDown,
-  FaCog,
-  FaEnvelope,
-  FaSignOutAlt,
-  FaUserCircle,
-} from "react-icons/fa";
+import { FaCaretDown, FaSignOutAlt, FaUserCircle } from "react-icons/fa";
 import {
   useAppDispatch,
   useAppSelector,
@@ -17,11 +11,7 @@ import {
 import { logout, selectAuthSliceUser } from "../../redux/slices/authSlice";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import Overlay from "./modals/Overlay";
-import Modal from "./modals/Modal";
-import HIMSTextField from "./HIMSTextField";
-import HIMSEmailField from "./HimsEmailField";
-import { MdCancel, MdEmail } from "react-icons/md";
+import UserUpdateForm from "../../forms/auth/userUpdateForm";
 
 interface TopBarProps {
   onMenuClick: () => void;
@@ -80,9 +70,22 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
               onClick={() => setIsOpen(!isOpen)}
               className="flex items-start space-x-2 focus:outline-none"
             >
-              <div className="flex flex-col  p-2 items-start">
-                <span className="text-gray-600">{authUser?.name}</span>
-                <small className="text-[11px]">Admin</small>
+              <div className="flex items-center gap-2">
+                <div>
+                  {authUser?.profileImage ? (
+                    <img
+                      src={authUser.profileImage}
+                      className="rounded-full object-cover w-10 h-10"
+                      alt="User profile"
+                    />
+                  ) : (
+                    <FaUserCircle className="w-10 h-10 text-gray-400" />
+                  )}
+                </div>
+                <div className="flex flex-col  p-2 items-start">
+                  <span className="text-gray-600">{authUser?.name}</span>
+                  <small className="text-[11px]">Admin</small>
+                </div>
               </div>
               <FaCaretDown
                 className={`text-gray-500 bg-primary rounded-full text-white  mt-3 cursor-pointer transition-transform duration-200 ${
@@ -138,41 +141,7 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
               <FaUserCircle className="text-lg text-white" />
               <h2 className="text-lg font-semibold text-white">Profile Edit</h2>
             </div>
-
-            <form className="">
-              <div>
-                <HIMSTextField
-                  Icon={FaUser}
-                  displayLabel="Username"
-                  classNames="text-xs"
-                  placeholderText="Enter your name"
-                />
-              </div>
-
-              <div>
-                <HIMSEmailField
-                  displayLabel="Email"
-                  classNames="text-xs"
-                  placeholderText="Enter your email"
-                />
-              </div>
-
-              <div className="flex justify-end space-x-3 mt-6">
-                <button
-                  type="button"
-                  className="px-4 py-2 cursor-pointer text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors duration-200"
-                  onClick={() => setOpenProfileModal(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 cursor-pointer text-sm font-medium text-white bg-primary rounded-md transition-colors duration-200"
-                >
-                  Save
-                </button>
-              </div>
-            </form>
+            <UserUpdateForm setOpenProfileModal={setOpenProfileModal} />
           </div>
         </div>
       )}

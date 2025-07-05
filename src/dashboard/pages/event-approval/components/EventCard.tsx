@@ -35,7 +35,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, isPublic }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mt-4">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
       {/* Header with subtle accent */}
       <div className="px-6 py-3 bg-primary border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
         <div className="flex items-center gap-3">
@@ -129,7 +129,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, isPublic }) => {
             href={event.letterLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 bg-blue-50 rounded-lg transition-all"
+            className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-800 border rounded-sm transition-all"
           >
             View Document
             <FiDownload size={16} />
@@ -142,18 +142,29 @@ const EventCard: React.FC<EventCardProps> = ({ event, isPublic }) => {
         <div className="flex items-center gap-2">
           {event?.isApproved === true ? (
             <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-full">
-              <FaCheckCircle className="text-green-600" size={16} />
-              <span className="text-sm font-medium text-green-600">
+              <FaCheckCircle className="text-green-600" size={14} />
+              <span className="text-xs font-medium text-green-600">
                 Approved
               </span>
             </div>
           ) : (
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-yellow-50 rounded-full">
-              <FaCheckCircle className="text-yellow-600" size={16} />
-              <span className="text-sm font-medium text-yellow-800">
-                Pending
-              </span>
-            </div>
+            <>
+              {event?.reason !== null ? (
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-red-50 rounded-full">
+                  <IoIosCloseCircle className="text-red-500" size={16} />
+                  <span className="text-xs font-medium text-black">
+                    Rejected
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-yellow-50 rounded-full">
+                  <FaCheckCircle className="text-yellow-600" size={14} />
+                  <span className="text-xs font-medium text-yellow-800">
+                    Pending
+                  </span>
+                </div>
+              )}
+            </>
           )}
         </div>
 
@@ -161,18 +172,20 @@ const EventCard: React.FC<EventCardProps> = ({ event, isPublic }) => {
           <div className="flex gap-3 w-full sm:w-auto">
             <button
               onClick={() => handleNavigate("approve", event.id)}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 text-xs font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
             >
-              <FaCheckCircle size={16} />
+              <FaCheckCircle size={14} />
               Approve
             </button>
-            <button
-              onClick={() => handleNavigate("reject", event.id)}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
-            >
-              <IoIosCloseCircle size={16} />
-              Reject
-            </button>
+            {event?.reason === null && (
+              <button
+                onClick={() => handleNavigate("reject", event.id)}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+              >
+                <IoIosCloseCircle size={16} />
+                Reject
+              </button>
+            )}
           </div>
         )}
       </div>

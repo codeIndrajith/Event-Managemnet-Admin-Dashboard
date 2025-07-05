@@ -8,7 +8,7 @@ interface AuthSliceUser {
   name: string;
   email: string;
   role: string;
-  profileImage?: string;
+  profileImage: string;
 }
 
 interface AuthSlice {
@@ -29,12 +29,12 @@ const authSlice = createSlice({
   reducers: {
     setAuthUser: (state, action: PayloadAction<UniqueResponseFormat>) => {
       const { payload } = action;
-      console.log(payload);
       const user: AuthSliceUser = {
         id: payload.data?.id,
         name: payload.data?.name,
         email: payload.data?.email,
         role: payload.data?.role,
+        profileImage: payload.data?.profileImage,
       };
       state.user = user;
       state.isAuthenticated = true;

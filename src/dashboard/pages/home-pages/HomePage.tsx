@@ -61,7 +61,7 @@ const HomePage: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <StatsCard
-            title="Total Events"
+            title="University All Events"
             value={totalDataCounts?.data?.totalEvent ?? 0}
             Icon={FaCalendarCheck}
             color="indigo"

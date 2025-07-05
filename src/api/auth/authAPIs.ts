@@ -1,5 +1,6 @@
 import type { AxiosInstance } from "axios";
 import type { SignInSchemaType } from "../../schema/auth/signInSchema";
+import type { UserProfileUpdateType } from "../../schema/auth/updateUserSchema";
 
 interface SignInParams {
   formData: SignInSchemaType;
@@ -7,6 +8,11 @@ interface SignInParams {
 }
 
 interface AuthUserParams {
+  axiosPrivate: AxiosInstance;
+}
+
+interface UpdateProfileParams {
+  formData: UserProfileUpdateType;
   axiosPrivate: AxiosInstance;
 }
 
@@ -61,6 +67,33 @@ export const AuthUser = async ({
     let errMsg: string = "Not Autherized";
     if (error?.response?.data?.message) {
       errMsg = error.response.data.message;
+    } else if (error?.message === "Network Error") {
+      errMsg = "Service Unavailable";
+    }
+    throw new Error(errMsg);
+  }
+};
+
+export const UpdateProfile = async ({
+  formData,
+  axiosPrivate,
+}: UpdateProfileParams): Promise<UniqueResponseFormat> => {
+  try {
+    const data = {
+      name: formData.name,
+      email: formData.email,
+      profileImage: formData.profileImage,
+    };
+
+    const response = await axiosPrivate.put(
+      "/auth/profile-update",
+      JSON.stringify(data)
+    );
+    return response.data;
+  } catch (error: any) {
+    let errMsg: string = "";
+    if (error?.response?.data?.error) {
+      errMsg = error?.response?.data?.error;
     } else if (error?.message === "Network Error") {
       errMsg = "Service Unavailable";
     }

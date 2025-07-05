@@ -24,6 +24,7 @@ export interface EventResponse {
   bannerImage?: string;
   senderName?: string;
   senderRole?: string;
+  reason?: string;
   senderOrganization?: string;
   letterLink?: string;
   isApproved?: boolean;

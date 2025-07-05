@@ -21,7 +21,7 @@ const EventApprovalPage: React.FC = () => {
 
   return (
     <div className="min-h-screen px-4">
-      <div className="max-w-7xl mx-auto">
+      <div className="">
         <div className="mb-8">
           <Banner
             title="Manage Event Approvals"
