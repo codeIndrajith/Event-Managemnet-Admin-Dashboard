@@ -42,13 +42,9 @@ const RecentEventsTable: React.FC<RecentEventsTableProps> = ({ events }) => {
                 {event.eventLocation}
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
-                {event?.isApproved === true ? (
+                {event?.isApproved === true && (
                   <span className="text-xs text-white bg-green-500 py-1 px-3 rounded-sm">
                     Approved
-                  </span>
-                ) : (
-                  <span className="text-xs text-white bg-yellow-500 py-1 px-3 rounded-sm">
-                    Pending
                   </span>
                 )}
               </td>

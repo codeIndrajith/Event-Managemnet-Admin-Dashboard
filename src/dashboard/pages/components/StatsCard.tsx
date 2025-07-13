@@ -29,7 +29,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
       {/* Dark overlay on hover */}
       <div className="absolute inset-0 before:absolute before:inset-0 before:bg-gradient-to-r before:from-black before:to-transparent before:opacity-0 group-hover:before:opacity-40 transition-opacity duration-800 rounded-lg z-0" />
 
-      <div className="flex items-center justify-between relative z-10">
+      <div className="flex items-center justify-between relative z-2">
         <div>
           <p className="text-lg font-medium text-white">{title}</p>
           <p className="text-3xl font-bold text-white mt-1">{value}</p>

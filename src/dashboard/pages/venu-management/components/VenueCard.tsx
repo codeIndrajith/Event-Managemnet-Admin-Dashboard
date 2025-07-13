@@ -75,13 +75,13 @@ const VenueCard: React.FC<VenueCardProps> = ({ venue, onEdit, onDelete }) => {
           >
             <FaEdit />
           </button>
-          <button
+          {/* <button
             onClick={() => onDelete(venue.id)}
             className="p-2 cursor-pointer text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
             aria-label="Delete venue"
           >
             <FaTrash />
-          </button>
+          </button> */}
         </div>
       </div>
 
