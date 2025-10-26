@@ -1,6 +1,6 @@
 // src/components/Sidebar.tsx
 import React from "react";
-import { FaRegCheckCircle } from "react-icons/fa";
+import { FaCalendar, FaRegCheckCircle } from "react-icons/fa";
 import {
   MdEventAvailable,
   MdOutlineDashboard,
@@ -32,6 +32,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       path: "/dashboard/events",
       icon: <MdEventAvailable />,
       label: "All Events",
+    },
+    {
+      path: "/dashboard/events-calendar",
+      icon: <FaCalendar />,
+      label: "Event Calendar",
     },
   ];
 

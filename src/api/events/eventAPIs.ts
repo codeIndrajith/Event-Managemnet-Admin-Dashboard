@@ -58,6 +58,23 @@ export const GetPendingApprovalEvents = async ({
   }
 };
 
+export const EventCalendar = async (
+  axiosPrivate: AxiosInstance
+): Promise<UniqueResponseFormat> => {
+  try {
+    const response = await axiosPrivate.get(`/events/event-dates`);
+    return response.data;
+  } catch (error: any) {
+    let errMsg: string = "Error occured during fetching event";
+    if (error?.response?.data?.message) {
+      errMsg = error.response.data.message;
+    } else if (error?.message === "Networ Error") {
+      errMsg = "Service Unavailable";
+    }
+    throw new Error(errMsg);
+  }
+};
+
 export const ApprveOrRejectEvent = async ({
   formData,
   eventId,

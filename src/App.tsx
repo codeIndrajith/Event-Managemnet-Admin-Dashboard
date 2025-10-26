@@ -10,6 +10,7 @@ import SignInPage from "./dashboard/pages/auth/SignInPage";
 import PersistAuth from "./dashboard/components/auth/PersistAuth";
 import NotFoundPage from "./dashboard/pages/404/NotFoundPage";
 import EventApproveOrRejectPage from "./dashboard/pages/event-approval/Approve & Reject/EventApproveOrRejectPage";
+import EventCalanderDisplayPage from "./dashboard/pages/event-calender/EventCalanderDisplayPage";
 
 function App() {
   return (
@@ -34,6 +35,10 @@ function App() {
             />
 
             <Route path="/dashboard/events" element={<AllEventsPage />} />
+            <Route
+              path="/dashboard/events-calendar"
+              element={<EventCalanderDisplayPage />}
+            />
           </Route>
 
           {/* Not Found Page */}
