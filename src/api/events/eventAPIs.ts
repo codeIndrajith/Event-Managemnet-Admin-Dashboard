@@ -106,13 +106,7 @@ export const ApprveOrRejectEvent = async ({
       JSON.stringify(data)
     );
     return response.data;
-  } catch (error: any) {
-    let errMsg: string = "Error occured during event approval";
-    if (error?.response?.data?.message) {
-      errMsg = error.response.data.message;
-    } else if (error?.message === "Networ Error") {
-      errMsg = "Service Unavailable";
-    }
-    throw new Error(errMsg);
+  } catch (err: any) {
+    throw new Error(err?.response?.data?.error);
   }
 };
