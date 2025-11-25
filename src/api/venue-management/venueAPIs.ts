@@ -19,6 +19,16 @@ interface UpdateVenuesParams {
   venueId: string;
 }
 
+export interface GetVenueHistoryParams {
+  axiosPrivate: any;
+  pageNumber?: number;
+  pageSize?: number;
+  venueName?: string;
+  locationType?: string;
+  startDate?: string;
+  endDate?: string;
+}
+
 export const AddVenues = async ({
   formData,
   axiosPrivate,
@@ -66,6 +76,59 @@ export const GetAllVenues = async ({
     } else if (error?.message === "Networ Error") {
       errMsg = "Service Unavailable";
     }
+    throw new Error(errMsg);
+  }
+};
+
+export const GetVenueHistory = async ({
+  axiosPrivate,
+  pageNumber = 1,
+  pageSize = 6,
+  venueName,
+  locationType,
+  startDate,
+  endDate,
+}: GetVenueHistoryParams): Promise<any> => {
+  try {
+    const queryParams = new URLSearchParams();
+
+    // Add pagination parameters
+    queryParams.append("pageNumber", pageNumber.toString());
+    queryParams.append("pageSize", pageSize.toString());
+
+    // Add optional filter parameters
+    if (venueName) {
+      queryParams.append("venueName", venueName);
+    }
+
+    if (locationType) {
+      queryParams.append("locationType", locationType);
+    }
+
+    if (startDate) {
+      queryParams.append("startDate", startDate);
+    }
+
+    if (endDate) {
+      queryParams.append("endDate", endDate);
+    }
+
+    const response = await axiosPrivate.get(
+      `/admin/venues/history?${queryParams.toString()}`
+    );
+
+    return response.data;
+  } catch (error: any) {
+    let errMsg: string = "Error occurred during fetch venues history";
+
+    if (error?.response?.data?.message) {
+      errMsg = error.response.data.message;
+    } else if (error?.message === "Network Error") {
+      errMsg = "Service Unavailable";
+    } else if (error?.message) {
+      errMsg = error.message;
+    }
+
     throw new Error(errMsg);
   }
 };

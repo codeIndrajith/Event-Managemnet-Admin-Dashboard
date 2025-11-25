@@ -6,3 +6,5 @@ export const FETCH_PENDING_APPROVAL_EVENTS = "get-pending-approval-events";
 
 // DASHBOARD DATA COUNTS
 export const ADMIN_DASHBOARD_DATA_COUNT = "dashboard-data-counts";
+
+export const FETCH_VENUE_HISTORY = "venue-history";

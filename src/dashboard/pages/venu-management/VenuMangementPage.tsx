@@ -1,15 +1,22 @@
+// VenuMangementPage.tsx
 import React, { useState } from "react";
 import AddVenueForm from "../../../forms/venue-management/AddVenueForm";
 import Banner from "../../components/Banner";
 import venueImage from "../../../assets/venues.png";
 import VenueCard from "./components/VenueCard";
-import { RiErrorWarningFill } from "react-icons/ri";
+import { RiErrorWarningFill, RiHistoryLine } from "react-icons/ri";
 import { useQuery } from "@tanstack/react-query";
-import { FETCH_VENUES } from "../../../reactQuery/query";
-import { GetAllVenues } from "../../../api/venue-management/venueAPIs";
+import { FETCH_VENUES, FETCH_VENUE_HISTORY } from "../../../reactQuery/query";
+import {
+  GetAllVenues,
+  GetVenueHistory,
+} from "../../../api/venue-management/venueAPIs";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
-import { FaMapMarkerAlt } from "react-icons/fa";
+import { FaMapMarkerAlt, FaFilter, FaSearch } from "react-icons/fa";
+import VenueHistorySkeleton from "../../components/venue-management/VenueHistorySkeleton";
+import VenueHistoryCard from "../../components/venue-management/VenueHistoryTable";
+import VenueHistoryTable from "../../components/venue-management/VenueHistoryTable";
 
 const PAGE_SIZE: number = 6;
 
@@ -17,37 +24,34 @@ const VenuMangementPage: React.FC = () => {
   const axiosPrivate = useAxiosPrivate();
   const [venueId, setVenueId] = useState<string>("");
   const [pageNumber, setPageNumber] = useState<number>(1);
+  const [historyPageNumber, setHistoryPageNumber] = useState<number>(1);
+  const [showHistory, setShowHistory] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [locationFilter, setLocationFilter] = useState<string>("");
+
+  // Fetch venues query
   const { data: venues, isLoading: isLoadingFetchVenues } = useQuery({
     queryKey: [FETCH_VENUES, pageNumber],
     queryFn: () => GetAllVenues({ axiosPrivate, pageNumber }),
   });
-  // const venues: any[] = [
-  //   {
-  //     id: "1",
-  //     venueName: "Grand Ballroom",
-  //     locationType: "indoor",
-  //     maxAttendees: 500,
-  //   },
-  //   {
-  //     id: "2",
-  //     venueName: "Central Park Pavilion",
-  //     locationType: "outdoor",
-  //     maxAttendees: 1000,
-  //   },
-  //   {
-  //     id: "3",
-  //     url: "3",
-  //     venueName: "Tech Conference Center",
-  //     locationType: "indoor",
-  //     maxAttendees: 300,
-  //   },
-  //   {
-  //     id: "4",
-  //     venueName: "Virtual Event Platform",
-  //     locationType: "indoor",
-  //     maxAttendees: 5000,
-  //   },
-  // ];
+
+  // Fetch venue history query
+  const { data: venueHistory, isLoading: isLoadingVenueHistory } = useQuery({
+    queryKey: [
+      FETCH_VENUE_HISTORY,
+      historyPageNumber,
+      searchTerm,
+      locationFilter,
+    ],
+    queryFn: () =>
+      GetVenueHistory({
+        axiosPrivate,
+        pageNumber: historyPageNumber,
+        venueName: searchTerm || undefined,
+        locationType: locationFilter || undefined,
+      }),
+    enabled: showHistory,
+  });
 
   const handleEdit = (id: string) => {
     setVenueId(id);
@@ -57,7 +61,7 @@ const VenuMangementPage: React.FC = () => {
     console.log("Delete venue:", id);
   };
 
-  // Handle pagination logics
+  // Pagination handlers for venues
   const handleNextPage = (): void => {
     if (venues?.data.length === PAGE_SIZE) {
       setPageNumber((prev) => prev + 1);
@@ -69,7 +73,28 @@ const VenuMangementPage: React.FC = () => {
       setPageNumber((prev) => prev - 1);
     }
   };
+
+  // Pagination handlers for history
+  const handleHistoryNextPage = (): void => {
+    if (venueHistory?.data.length === PAGE_SIZE) {
+      setHistoryPageNumber((prev) => prev + 1);
+    }
+  };
+
+  const handleHistoryPrevPage = (): void => {
+    if (historyPageNumber > 1) {
+      setHistoryPageNumber((prev) => prev - 1);
+    }
+  };
+
   const venuesLength: number = venues?.data?.length ?? 0;
+  const historyLength: number = venueHistory?.data?.length ?? 0;
+
+  const clearFilters = () => {
+    setSearchTerm("");
+    setLocationFilter("");
+    setHistoryPageNumber(1);
+  };
 
   return (
     <div className="min-h-screen px-4">
@@ -83,6 +108,7 @@ const VenuMangementPage: React.FC = () => {
             className="object-cover w-[200px]"
           />
         </div>
+
         {!venueId ? (
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
             <div className="flex items-center gap-3 pb-4 mb-6 border-b border-gray-100">
@@ -95,13 +121,159 @@ const VenuMangementPage: React.FC = () => {
           </div>
         ) : (
           <button
-            className="px-4 py-2 mb-6 bg-primary text-white rounded-md text-sm cursor-pointer"
+            className="px-4 py-2 mb-6 bg-primary text-white rounded-md text-sm cursor-pointer hover:bg-primary/90 transition-colors"
             onClick={() => setVenueId("")}
           >
             Add Venue
           </button>
         )}
 
+        {/* Venue History Section */}
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
+            <div className="flex items-center gap-3 mb-4 sm:mb-0">
+              <RiHistoryLine className="text-xl text-blue-600" />
+              <div>
+                <h2 className="text-xl font-bold text-gray-800">
+                  Venue History
+                </h2>
+                <p className="text-sm text-gray-600">
+                  Recently created venues and their details
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowHistory(!showHistory)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  showHistory
+                    ? "bg-blue-600 text-white shadow-md"
+                    : "bg-white text-gray-700 border border-gray-300 hover:border-blue-300"
+                }`}
+              >
+                {showHistory ? "Hide History" : "Show History"}
+              </button>
+
+              {showHistory && (
+                <button
+                  onClick={clearFilters}
+                  className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:border-red-300 transition-colors"
+                >
+                  Clear Filters
+                </button>
+              )}
+            </div>
+          </div>
+
+          {showHistory && (
+            <div className="space-y-4">
+              {/* Filters */}
+              <div className="bg-white rounded-lg border border-gray-200 p-4">
+                <div className="flex flex-col md:flex-row gap-4">
+                  <div className="flex-1">
+                    <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                      <FaSearch className="w-4 h-4 mr-2" />
+                      Search Venues
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Search by venue name..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  <div className="flex-1">
+                    <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                      <FaFilter className="w-4 h-4 mr-2" />
+                      Filter by Location Type
+                    </label>
+                    <select
+                      value={locationFilter}
+                      onChange={(e) => setLocationFilter(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="">All Types</option>
+                      <option value="indoor">Indoor</option>
+                      <option value="outdoor">Outdoor</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* History Content */}
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <p className="text-lg font-bold text-gray-800">
+                    Page: {historyPageNumber}
+                  </p>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleHistoryPrevPage}
+                      disabled={historyPageNumber === 1}
+                      className={`flex items-center justify-center p-2 rounded-lg transition-colors ${
+                        historyPageNumber === 1
+                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          : "bg-blue-600 text-white hover:bg-blue-700"
+                      }`}
+                    >
+                      <MdNavigateBefore className="text-lg" />
+                    </button>
+
+                    <span className="min-w-[48px] text-center text-md text-black font-semibold">
+                      {historyPageNumber}
+                    </span>
+
+                    <button
+                      onClick={handleHistoryNextPage}
+                      disabled={historyLength < PAGE_SIZE}
+                      className={`flex items-center justify-center p-2 rounded-lg transition-colors ${
+                        historyLength < PAGE_SIZE
+                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          : "bg-blue-600 text-white hover:bg-blue-700"
+                      }`}
+                    >
+                      <MdNavigateNext className="text-lg" />
+                    </button>
+                  </div>
+                </div>
+
+                {isLoadingVenueHistory ? (
+                  <div className="">
+                    {Array.from({ length: 3 }).map((_, index) => (
+                      <VenueHistorySkeleton key={index} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="">
+                    {venueHistory && venueHistory.data?.length > 0 ? (
+                      venueHistory.data.map((venue: any) => (
+                        <VenueHistoryTable venues={venueHistory.data} />
+                      ))
+                    ) : (
+                      <div className="col-span-full bg-gray-50 p-8 text-center rounded-lg border border-gray-200">
+                        <RiErrorWarningFill className="text-4xl text-gray-400 mx-auto mb-3" />
+                        <p className="text-gray-600 font-medium">
+                          No venue history found
+                        </p>
+                        <p className="text-sm text-gray-500 mt-1">
+                          {searchTerm || locationFilter
+                            ? "Try adjusting your filters"
+                            : "No venues have been created recently"}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Existing Recent Venues Section */}
         <div className="rounded-xl">
           <div>
             <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-300 pb-2">
@@ -132,7 +304,7 @@ const VenuMangementPage: React.FC = () => {
 
                   <button
                     onClick={handleNextPage}
-                    disabled={venues?.data < PAGE_SIZE}
+                    disabled={venuesLength < PAGE_SIZE}
                     className={`flex items-center justify-center p-2 rounded-lg ${
                       venuesLength < PAGE_SIZE
                         ? "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -147,6 +319,7 @@ const VenuMangementPage: React.FC = () => {
               </div>
             </div>
           </div>
+
           {isLoadingFetchVenues ? (
             Array.from({ length: 3 }).map((_, index) => (
               <div
