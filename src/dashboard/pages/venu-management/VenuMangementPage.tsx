@@ -250,9 +250,8 @@ const VenuMangementPage: React.FC = () => {
                 ) : (
                   <div className="">
                     {venueHistory && venueHistory.data?.length > 0 ? (
-                      venueHistory.data.map((venue: any) => (
-                        <VenueHistoryTable venues={venueHistory.data} />
-                      ))
+                      // FIX: Render the table once with all data
+                      <VenueHistoryTable venues={venueHistory.data} />
                     ) : (
                       <div className="col-span-full bg-gray-50 p-8 text-center rounded-lg border border-gray-200">
                         <RiErrorWarningFill className="text-4xl text-gray-400 mx-auto mb-3" />
